@@ -17,66 +17,181 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-.main {
-    background-color: #0f1117;
+/* Fondo general */
+
+[data-testid="stAppViewContainer"] {
+
+    background:
+    linear-gradient(
+        135deg,
+        #f8faf5,
+        #eef7ea,
+        #dff3d8
+    );
 }
 
-h1, h2, h3 {
-    color: #E8E8E8;
+/* Sidebar */
+
+[data-testid="stSidebar"] {
+
+    background-color: #f1f5ee;
+
+    border-right: 1px solid #c7d2c0;
 }
 
-.stMetric {
-    background-color: #1c1f26;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #2d3139;
+/* Texto */
+
+html, body, [class*="css"] {
+
+    color: #1f2937;
+
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.stButton>button {
-    background-color: #4CAF50;
+/* Títulos */
+
+h1 {
+
+    color: #14532d;
+
+    font-size: 3rem;
+
+    font-weight: 700;
+}
+
+h2, h3 {
+
+    color: #166534;
+}
+
+/* Tarjetas */
+
+[data-testid="metric-container"] {
+
+    background-color: rgba(255,255,255,0.85);
+
+    border: 1px solid #d1d5db;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0px 4px 20px rgba(0,0,0,0.08);
+
+    transition: 0.3s;
+}
+
+[data-testid="metric-container"]:hover {
+
+    transform: translateY(-3px);
+
+    border: 1px solid #22c55e;
+}
+
+/* Botones */
+
+.stButton > button {
+
+    background: linear-gradient(
+        to right,
+        #16a34a,
+        #15803d
+    );
+
     color: white;
-    border-radius: 10px;
-    height: 3em;
-    width: 100%;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
     font-size: 16px;
+
+    font-weight: 600;
+
+    transition: 0.3s;
 }
 
-.stButton>button:hover {
-    background-color: #45a049;
+.stButton > button:hover {
+
+    transform: scale(1.02);
+
+    background: linear-gradient(
+        to right,
+        #15803d,
+        #166534
+    );
+}
+
+/* Inputs */
+
+.stNumberInput input {
+
+    background-color: white;
+
+    color: #111827;
+}
+
+/* Alertas */
+
+.stAlert {
+
+    border-radius: 14px;
+}
+
+/* Separadores */
+
+hr {
+
+    border: 1px solid #d1d5db;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------
-# TÍTULO
+# HEADER
 # ---------------------------------------------------
 
-col1, col2 = st.columns([1,5])
+col1, col2, col3 = st.columns([1,3,2])
 
 with col1:
+
     st.image(
-        "https://upload.wikimedia.org/wikipedia/commons/7/75/Logo_UVG.png",
-        width=90
+        "images/uvg_logo.png",
+        width=110
     )
 
 with col2:
+
     st.title("AVO-LIOEX")
-    st.subheader(
-        "Simulador de extracción de aceite de aguacate Hass"
+
+    st.caption(
+        "Sistema de simulación industrial para extracción de aceite de aguacate Hass"
+    )
+
+with col3:
+
+    st.image(
+        "images/avo_logo.png",
+        width=230
     )
 
 st.divider()
 
 # ---------------------------------------------------
-# MENÚ
+# SIDEBAR
 # ---------------------------------------------------
 
 st.sidebar.title("Panel de navegación")
 
-st.sidebar.info(
-    "Seleccione una sección del simulador."
+st.sidebar.caption(
+    "Seleccione una sección."
 )
+
+st.sidebar.divider()
 
 menu = st.sidebar.radio(
     "",
@@ -97,23 +212,18 @@ if menu == "Inicio":
     st.header("Descripción del sistema")
 
     st.write("""
-    El simulador AVO-LIOEX permite modelar el proceso
-    de extracción sólido-líquido de aceite de aguacate
-    Hass utilizando etanol como solvente.
-
-    El sistema analiza variables críticas del proceso
-    para estimar el rendimiento y la producción de aceite.
+    El simulador AVO-LIOEX modela el proceso de extracción
+    sólido-líquido de aceite de aguacate Hass utilizando
+    etanol como solvente.
     """)
 
     st.divider()
 
     st.info("""
-    Instrucciones de uso:
-
-    1. Ingrese a la sección "Simulador".
-    2. Ajuste las variables operativas.
+    1. Ingrese al simulador.
+    2. Ajuste variables operativas.
     3. Ejecute la simulación.
-    4. Analice los resultados obtenidos.
+    4. Analice los resultados.
     """)
 
     st.divider()
@@ -126,8 +236,8 @@ if menu == "Inicio":
     )
 
     col2.metric(
-        "Relación sólido-solvente",
-        "1:3 - 1:5"
+        "Ciclos recomendados",
+        "5 - 10"
     )
 
     col3.metric(
@@ -143,15 +253,13 @@ elif menu == "Simulador":
 
     st.header("Simulación del proceso")
 
-    st.write("""
-    Ingrese los parámetros operativos del sistema.
-    """)
+    st.progress(75)
+
+    st.caption(
+        "Sistema listo para ejecutar simulación."
+    )
 
     st.divider()
-
-    # ---------------------------------------------------
-    # VARIABLES DE ENTRADA
-    # ---------------------------------------------------
 
     col1, col2 = st.columns(2)
 
@@ -160,23 +268,20 @@ elif menu == "Simulador":
         masa_aguacate = st.number_input(
             "Masa de aguacate (g)",
             min_value=0.0,
-            value=1000.0,
-            help="Cantidad total de aguacate procesado."
+            value=1000.0
         )
 
         masa_cascara = st.number_input(
             "Masa de cáscara (g)",
             min_value=0.0,
-            value=150.0,
-            help="Cantidad de cáscara removida."
+            value=150.0
         )
 
         humedad = st.slider(
             "Humedad de la pulpa (%)",
             0,
             100,
-            75,
-            help="La humedad afecta directamente la eficiencia."
+            75
         )
 
     with col2:
@@ -184,52 +289,32 @@ elif menu == "Simulador":
         etanol = st.number_input(
             "Volumen de etanol (mL)",
             min_value=0.0,
-            value=500.0,
-            help="Cantidad de solvente utilizada."
+            value=500.0
         )
 
         temperatura = st.slider(
             "Temperatura de evaporación (°C)",
             40,
             100,
-            75,
-            help="Rango recomendado: 70 - 78.5 °C"
+            75
         )
 
         ciclos = st.slider(
             "Ciclos de extracción",
             1,
             15,
-            5,
-            help="Cantidad de ciclos sólido-solvente realizados."
+            5
         )
 
     st.divider()
 
-    st.caption("Rangos recomendados:")
-    st.caption("• Temperatura: 70 - 78.5 °C")
-    st.caption("• Ciclos recomendados: 5 - 10")
-    st.caption("• Humedad baja mejora el rendimiento")
-
-    st.divider()
-
-    # ---------------------------------------------------
-    # BOTÓN DE SIMULACIÓN
-    # ---------------------------------------------------
-
-    if st.button("Ejecutar simulación"):
-
-        # ---------------------------------------------------
-        # CÁLCULOS
-        # ---------------------------------------------------
+    if st.button("Iniciar simulación"):
 
         masa_pulpa = masa_aguacate - masa_cascara
 
         agua_eliminada = masa_pulpa * (humedad / 100)
 
         aceite_teorico = masa_pulpa * 0.15
-
-        # Ajuste dinámico según ciclos
 
         eficiencia_ciclos = 0.553 + ((ciclos - 5) * 0.015)
 
@@ -240,27 +325,22 @@ elif menu == "Simulador":
             aceite_teorico * eficiencia_ciclos
         )
 
-        etanol_recuperado = etanol * 0.80
-
         rendimiento = (
             aceite_recuperado / aceite_teorico
         ) * 100
 
-        eficiencia_global = (
-            aceite_recuperado / masa_pulpa
-        ) * 100
-
-        # ---------------------------------------------------
-        # RESULTADOS
-        # ---------------------------------------------------
-
         st.success(
-            "Simulación completada correctamente."
+            "Simulación ejecutada correctamente."
         )
 
         st.divider()
 
-        st.subheader("Resultados del proceso")
+        st.metric(
+            "Producción estimada de aceite",
+            f"{aceite_recuperado:.2f} g"
+        )
+
+        st.divider()
 
         col1, col2, col3 = st.columns(3)
 
@@ -270,114 +350,14 @@ elif menu == "Simulador":
         )
 
         col2.metric(
-            "Aceite recuperado",
-            f"{aceite_recuperado:.2f} g"
+            "Agua eliminada",
+            f"{agua_eliminada:.2f} g"
         )
 
         col3.metric(
             "Rendimiento",
             f"{rendimiento:.2f} %"
         )
-
-        col4, col5, col6 = st.columns(3)
-
-        col4.metric(
-            "Agua eliminada",
-            f"{agua_eliminada:.2f} g"
-        )
-
-        col5.metric(
-            "Etanol recuperado",
-            f"{etanol_recuperado:.2f} mL"
-        )
-
-        col6.metric(
-            "Eficiencia global",
-            f"{eficiencia_global:.2f} %"
-        )
-
-        st.divider()
-
-        st.success(
-            f"Producción estimada de aceite: {aceite_recuperado:.2f} g"
-        )
-
-        # ---------------------------------------------------
-        # ALERTAS
-        # ---------------------------------------------------
-
-        st.divider()
-
-        st.subheader("Estado del sistema")
-
-        if temperatura > 78.5:
-
-            st.error(
-                "Temperatura fuera del rango recomendado."
-            )
-
-        elif temperatura < 70:
-
-            st.warning(
-                "Temperatura baja: posible reducción del rendimiento."
-            )
-
-        else:
-
-            st.success(
-                "Temperatura dentro del rango óptimo."
-            )
-
-        if ciclos > 10:
-
-            st.warning(
-                "Número elevado de ciclos: posible aumento energético."
-            )
-
-        else:
-
-            st.success(
-                "Número de ciclos adecuado."
-            )
-
-        if humedad > 80:
-
-            st.error(
-                "Humedad excesiva: posible disminución de eficiencia."
-            )
-
-        # ---------------------------------------------------
-        # GRÁFICA
-        # ---------------------------------------------------
-
-        st.divider()
-
-        st.subheader(
-            "Distribución estimada del proceso"
-        )
-
-        etiquetas = [
-            "Aceite",
-            "Agua",
-            "Cáscara"
-        ]
-
-        valores = [
-            aceite_recuperado,
-            agua_eliminada,
-            masa_cascara
-        ]
-
-        fig, ax = plt.subplots()
-
-        ax.pie(
-            valores,
-            labels=etiquetas,
-            autopct='%1.1f%%',
-            startangle=90
-        )
-
-        st.pyplot(fig)
 
 # ---------------------------------------------------
 # PANEL DE CONTROL
@@ -387,36 +367,28 @@ elif menu == "Panel de Control":
 
     st.header("Panel de control")
 
-    st.write("""
-    Monitoreo de variables críticas del sistema.
-    """)
-
-    st.divider()
-
     temperatura_panel = st.slider(
-        "Temperatura del sistema",
+        "Temperatura",
         40,
         100,
         75
     )
 
     ciclos_panel = st.slider(
-        "Ciclos de extracción",
+        "Ciclos",
         1,
         15,
         5
     )
 
     humedad_panel = st.slider(
-        "Humedad residual",
+        "Humedad",
         0,
         20,
         3
     )
 
     st.divider()
-
-    st.subheader("Estado operativo")
 
     if 70 <= temperatura_panel <= 78.5:
 
@@ -427,19 +399,19 @@ elif menu == "Panel de Control":
     else:
 
         st.error(
-            "Temperatura fuera de límites operativos."
+            "Temperatura fuera de límites."
         )
 
     if 5 <= ciclos_panel <= 10:
 
         st.success(
-            "Número de ciclos adecuado."
+            "Ciclos dentro del rango."
         )
 
     else:
 
         st.warning(
-            "Número de ciclos fuera del rango recomendado."
+            "Ciclos fuera del rango recomendado."
         )
 
     if humedad_panel < 5:
@@ -462,8 +434,6 @@ elif menu == "Resultados":
 
     st.header("Análisis de resultados")
 
-    st.divider()
-
     temperaturas = [50, 60, 70, 75, 80, 90]
 
     rendimiento = [30, 40, 50, 55.3, 48, 35]
@@ -474,8 +444,11 @@ elif menu == "Resultados":
         temperaturas,
         rendimiento,
         marker='o',
-        linewidth=3
+        linewidth=3,
+        color="#15803d"
     )
+
+    ax.set_facecolor("#ffffff")
 
     ax.set_title(
         "Rendimiento vs Temperatura"
@@ -492,10 +465,4 @@ elif menu == "Resultados":
     ax.grid(True)
 
     st.pyplot(fig)
-
-    st.divider()
-
-    st.info("""
-    El rendimiento máximo se obtiene cerca de los 75 °C.
-    Temperaturas superiores pueden afectar la calidad del aceite.
-    """) 
+    
