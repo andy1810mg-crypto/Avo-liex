@@ -174,7 +174,7 @@ col1, col2, col3 = st.columns([1,4,2])
 with col1:
 
     st.image(
-        "images/uvglogo.png",
+        "images/uvglogo.jpeg",
         width=120
     )
 
