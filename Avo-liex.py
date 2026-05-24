@@ -11,13 +11,13 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------
-# ESTILO VISUAL
+# ESTILO VISUAL PROFESIONAL
 # ---------------------------------------------------
 
 st.markdown("""
 <style>
 
-/* Fondo general */
+/* Fondo principal */
 
 [data-testid="stAppViewContainer"] {
 
@@ -152,7 +152,7 @@ hr {
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------
-# HEADER
+# HEADER PRINCIPAL
 # ---------------------------------------------------
 
 col1, col2, col3 = st.columns([1,3,2])
@@ -160,7 +160,7 @@ col1, col2, col3 = st.columns([1,3,2])
 with col1:
 
     st.image(
-        "images/uvg_logo.png",
+        "images/uvg_logo.jpeg",
         width=110
     )
 
@@ -175,7 +175,7 @@ with col2:
 with col3:
 
     st.image(
-        "images/avo_logo.png",
+        "images/avo_logo.jpeg",
         width=230
     )
 
@@ -261,6 +261,10 @@ elif menu == "Simulador":
 
     st.divider()
 
+    # ---------------------------------------------------
+    # VARIABLES DE ENTRADA
+    # ---------------------------------------------------
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -268,20 +272,23 @@ elif menu == "Simulador":
         masa_aguacate = st.number_input(
             "Masa de aguacate (g)",
             min_value=0.0,
-            value=1000.0
+            value=1000.0,
+            help="Cantidad total de aguacate procesado."
         )
 
         masa_cascara = st.number_input(
             "Masa de cáscara (g)",
             min_value=0.0,
-            value=150.0
+            value=150.0,
+            help="Cantidad de cáscara removida."
         )
 
         humedad = st.slider(
             "Humedad de la pulpa (%)",
             0,
             100,
-            75
+            75,
+            help="La humedad afecta directamente la eficiencia."
         )
 
     with col2:
@@ -289,26 +296,44 @@ elif menu == "Simulador":
         etanol = st.number_input(
             "Volumen de etanol (mL)",
             min_value=0.0,
-            value=500.0
+            value=500.0,
+            help="Cantidad de solvente utilizada."
         )
 
         temperatura = st.slider(
             "Temperatura de evaporación (°C)",
             40,
             100,
-            75
+            75,
+            help="Rango recomendado: 70 - 78.5 °C"
         )
 
         ciclos = st.slider(
             "Ciclos de extracción",
             1,
             15,
-            5
+            5,
+            help="Cantidad de ciclos sólido-solvente realizados."
         )
 
     st.divider()
 
+    st.caption("Rangos recomendados:")
+    st.caption("• Temperatura: 70 - 78.5 °C")
+    st.caption("• Ciclos recomendados: 5 - 10")
+    st.caption("• Humedad baja mejora el rendimiento")
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # BOTÓN
+    # ---------------------------------------------------
+
     if st.button("Iniciar simulación"):
+
+        # ---------------------------------------------------
+        # CÁLCULOS
+        # ---------------------------------------------------
 
         masa_pulpa = masa_aguacate - masa_cascara
 
@@ -325,9 +350,19 @@ elif menu == "Simulador":
             aceite_teorico * eficiencia_ciclos
         )
 
+        etanol_recuperado = etanol * 0.80
+
         rendimiento = (
             aceite_recuperado / aceite_teorico
         ) * 100
+
+        eficiencia_global = (
+            aceite_recuperado / masa_pulpa
+        ) * 100
+
+        # ---------------------------------------------------
+        # RESULTADOS
+        # ---------------------------------------------------
 
         st.success(
             "Simulación ejecutada correctamente."
@@ -358,6 +393,100 @@ elif menu == "Simulador":
             "Rendimiento",
             f"{rendimiento:.2f} %"
         )
+
+        col4, col5, col6 = st.columns(3)
+
+        col4.metric(
+            "Etanol recuperado",
+            f"{etanol_recuperado:.2f} mL"
+        )
+
+        col5.metric(
+            "Eficiencia global",
+            f"{eficiencia_global:.2f} %"
+        )
+
+        col6.metric(
+            "Ciclos aplicados",
+            f"{ciclos}"
+        )
+
+        st.divider()
+
+        # ---------------------------------------------------
+        # ALERTAS
+        # ---------------------------------------------------
+
+        st.subheader("Estado del sistema")
+
+        if temperatura > 78.5:
+
+            st.error(
+                "Temperatura fuera del rango recomendado."
+            )
+
+        elif temperatura < 70:
+
+            st.warning(
+                "Temperatura baja: posible reducción del rendimiento."
+            )
+
+        else:
+
+            st.success(
+                "Temperatura dentro del rango óptimo."
+            )
+
+        if ciclos > 10:
+
+            st.warning(
+                "Número elevado de ciclos: posible aumento energético."
+            )
+
+        else:
+
+            st.success(
+                "Número de ciclos adecuado."
+            )
+
+        if humedad > 80:
+
+            st.error(
+                "Humedad excesiva: posible disminución de eficiencia."
+            )
+
+        # ---------------------------------------------------
+        # GRÁFICA
+        # ---------------------------------------------------
+
+        st.divider()
+
+        st.subheader(
+            "Distribución estimada del proceso"
+        )
+
+        etiquetas = [
+            "Aceite",
+            "Agua",
+            "Cáscara"
+        ]
+
+        valores = [
+            aceite_recuperado,
+            agua_eliminada,
+            masa_cascara
+        ]
+
+        fig, ax = plt.subplots()
+
+        ax.pie(
+            valores,
+            labels=etiquetas,
+            autopct='%1.1f%%',
+            startangle=90
+        )
+
+        st.pyplot(fig)
 
 # ---------------------------------------------------
 # PANEL DE CONTROL
