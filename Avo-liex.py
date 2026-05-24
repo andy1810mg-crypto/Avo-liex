@@ -160,7 +160,7 @@ col1, col2, col3 = st.columns([1,3,2])
 with col1:
 
     st.image(
-        "images/uvg_logo.jpeg",
+        "images/uvg.jpeg",
         width=110
     )
 
@@ -175,7 +175,7 @@ with col2:
 with col3:
 
     st.image(
-        "images/avo_logo.jpeg",
+        "images/avo.jpeg",
         width=230
     )
 
