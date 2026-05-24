@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------
-# ESTILO VISUAL PROFESIONAL
+# ESTILO VISUAL
 # ---------------------------------------------------
 
 st.markdown("""
@@ -24,9 +24,9 @@ st.markdown("""
     background:
     linear-gradient(
         135deg,
-        #f8faf5,
+        #f9faf7,
         #eef7ea,
-        #dff3d8
+        #e2f1dc
     );
 }
 
@@ -34,18 +34,25 @@ st.markdown("""
 
 [data-testid="stSidebar"] {
 
-    background-color: #f1f5ee;
+    background-color: #edf4e8;
 
-    border-right: 1px solid #c7d2c0;
+    border-right: 1px solid #cbd5c0;
 }
 
-/* Texto */
+/* Texto general */
 
 html, body, [class*="css"] {
 
     color: #1f2937;
 
     font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar texto */
+
+[data-testid="stSidebar"] * {
+
+    color: #1f2937 !important;
 }
 
 /* Títulos */
@@ -64,11 +71,18 @@ h2, h3 {
     color: #166534;
 }
 
+/* Párrafos */
+
+p {
+
+    color: #374151;
+}
+
 /* Tarjetas */
 
 [data-testid="metric-container"] {
 
-    background-color: rgba(255,255,255,0.85);
+    background-color: rgba(255,255,255,0.92);
 
     border: 1px solid #d1d5db;
 
@@ -155,13 +169,13 @@ hr {
 # HEADER PRINCIPAL
 # ---------------------------------------------------
 
-col1, col2, col3 = st.columns([1,3,2])
+col1, col2, col3 = st.columns([1,4,2])
 
 with col1:
 
     st.image(
-        "images/uvg.jpeg",
-        width=110
+        "images/uvglogo.png",
+        width=120
     )
 
 with col2:
@@ -175,7 +189,7 @@ with col2:
 with col3:
 
     st.image(
-        "images/avo.jpeg",
+        "images/avo.jpeg.jpeg",
         width=230
     )
 
@@ -272,23 +286,20 @@ elif menu == "Simulador":
         masa_aguacate = st.number_input(
             "Masa de aguacate (g)",
             min_value=0.0,
-            value=1000.0,
-            help="Cantidad total de aguacate procesado."
+            value=1000.0
         )
 
         masa_cascara = st.number_input(
             "Masa de cáscara (g)",
             min_value=0.0,
-            value=150.0,
-            help="Cantidad de cáscara removida."
+            value=150.0
         )
 
         humedad = st.slider(
             "Humedad de la pulpa (%)",
             0,
             100,
-            75,
-            help="La humedad afecta directamente la eficiencia."
+            75
         )
 
     with col2:
@@ -296,24 +307,21 @@ elif menu == "Simulador":
         etanol = st.number_input(
             "Volumen de etanol (mL)",
             min_value=0.0,
-            value=500.0,
-            help="Cantidad de solvente utilizada."
+            value=500.0
         )
 
         temperatura = st.slider(
             "Temperatura de evaporación (°C)",
             40,
             100,
-            75,
-            help="Rango recomendado: 70 - 78.5 °C"
+            75
         )
 
         ciclos = st.slider(
             "Ciclos de extracción",
             1,
             15,
-            5,
-            help="Cantidad de ciclos sólido-solvente realizados."
+            5
         )
 
     st.divider()
@@ -440,7 +448,7 @@ elif menu == "Simulador":
         if ciclos > 10:
 
             st.warning(
-                "Número elevado de ciclos: posible aumento energético."
+                "Número elevado de ciclos."
             )
 
         else:
@@ -452,14 +460,14 @@ elif menu == "Simulador":
         if humedad > 80:
 
             st.error(
-                "Humedad excesiva: posible disminución de eficiencia."
+                "Humedad excesiva."
             )
+
+        st.divider()
 
         # ---------------------------------------------------
         # GRÁFICA
         # ---------------------------------------------------
-
-        st.divider()
 
         st.subheader(
             "Distribución estimada del proceso"
