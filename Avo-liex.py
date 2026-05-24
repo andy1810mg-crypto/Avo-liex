@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title="AVO-LIOEX",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 # ---------------------------------------------------
@@ -59,7 +60,7 @@ html, body, [class*="css"] {
 
 h1 {
 
-    color: #14532d;
+    color: #0f172a !important;
 
     font-size: 3rem;
 
@@ -68,7 +69,7 @@ h1 {
 
 h2, h3 {
 
-    color: #166534;
+    color: #1e293b !important;
 }
 
 /* Párrafos */
@@ -223,17 +224,20 @@ menu = st.sidebar.radio(
 
 if menu == "Inicio":
 
-    st.header("Descripción del sistema")
+    st.header("Bienvenido a AVO-LIOEX")
 
     st.write("""
-    El simulador AVO-LIOEX modela el proceso de extracción
-    sólido-líquido de aceite de aguacate Hass utilizando
-    etanol como solvente.
+    Plataforma de simulación industrial orientada
+    al análisis del proceso de extracción sólido-líquido
+    de aceite de aguacate Hass utilizando hexano
+    como solvente.
     """)
 
     st.divider()
 
     st.info("""
+    Instrucciones de uso:
+
     1. Ingrese al simulador.
     2. Ajuste variables operativas.
     3. Ejecute la simulación.
@@ -304,10 +308,11 @@ elif menu == "Simulador":
 
     with col2:
 
-        etanol = st.number_input(
-            "Volumen de etanol (mL)",
+        hexano = st.number_input(
+            "Volumen de hexano (mL)",
             min_value=0.0,
-            value=500.0
+            value=500.0,
+            help="Cantidad de hexano utilizada como solvente."
         )
 
         temperatura = st.slider(
@@ -358,7 +363,7 @@ elif menu == "Simulador":
             aceite_teorico * eficiencia_ciclos
         )
 
-        etanol_recuperado = etanol * 0.80
+        hexano_recuperado = hexano * 0.80
 
         rendimiento = (
             aceite_recuperado / aceite_teorico
@@ -405,8 +410,8 @@ elif menu == "Simulador":
         col4, col5, col6 = st.columns(3)
 
         col4.metric(
-            "Etanol recuperado",
-            f"{etanol_recuperado:.2f} mL"
+            "Hexano recuperado",
+            f"{hexano_recuperado:.2f} mL"
         )
 
         col5.metric(
