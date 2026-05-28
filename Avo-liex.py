@@ -48,7 +48,7 @@ st.markdown("""
     border-right: 1px solid #cbd5c0;
 }
 
-/* TEXTO GENERAL */
+/* Texto general */
 
 html, body, p, label, div, span {
 
@@ -57,14 +57,14 @@ html, body, p, label, div, span {
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* TEXTO SIDEBAR */
+/* Sidebar */
 
 [data-testid="stSidebar"] * {
 
     color: #111827 !important;
 }
 
-/* TÍTULOS */
+/* Títulos */
 
 h1 {
 
@@ -80,37 +80,51 @@ h2, h3 {
     color: #1e293b !important;
 }
 
-/* INPUTS */
+/* Tabs */
 
-.stNumberInput input {
+button[data-baseweb="tab"] {
 
-    background-color: white !important;
+    color: #111827 !important;
+
+    font-weight: 600 !important;
+}
+
+/* Radios */
+
+.stRadio * {
 
     color: #111827 !important;
 }
 
-/* SLIDERS */
+/* Sliders */
 
-.stSlider label {
-
-    color: #111827 !important;
-}
-
-/* SELECTBOX */
-
-.stSelectbox label {
+.stSlider * {
 
     color: #111827 !important;
 }
 
-/* RADIO */
+/* Inputs */
 
-.stRadio label {
+.stNumberInput * {
 
     color: #111827 !important;
 }
 
-/* METRICS */
+/* Selectbox */
+
+.stSelectbox * {
+
+    color: #111827 !important;
+}
+
+/* Captions */
+
+small {
+
+    color: #374151 !important;
+}
+
+/* Métricas */
 
 [data-testid="metric-container"] {
 
@@ -126,7 +140,7 @@ h2, h3 {
         0px 4px 20px rgba(0,0,0,0.08);
 }
 
-/* BOTONES */
+/* Botones */
 
 .stButton > button {
 
@@ -149,32 +163,11 @@ h2, h3 {
     font-weight: 600;
 }
 
-/* ALERTAS */
+/* Alertas */
 
 .stAlert {
 
     border-radius: 14px;
-}
-
-/* SELECTBOX TEXTO */
-
-.stSelectbox div {
-
-    color: #111827 !important;
-}
-
-/* RADIO TEXTO */
-
-.stRadio div {
-
-    color: #111827 !important;
-}
-
-/* CAPTIONS */
-
-small {
-
-    color: #374151 !important;
 }
 
 </style>
