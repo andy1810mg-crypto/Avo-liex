@@ -26,6 +26,8 @@ if "resultado_simulacion" not in st.session_state:
 st.markdown("""
 <style>
 
+/* Fondo principal */
+
 [data-testid="stAppViewContainer"] {
 
     background:
@@ -37,6 +39,8 @@ st.markdown("""
     );
 }
 
+/* Sidebar */
+
 [data-testid="stSidebar"] {
 
     background-color: #edf4e8;
@@ -44,17 +48,23 @@ st.markdown("""
     border-right: 1px solid #cbd5c0;
 }
 
-html, body, [class*="css"] {
+/* TEXTO GENERAL */
 
-    color: #1f2937;
+html, body, p, label, div, span {
+
+    color: #111827 !important;
 
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* TEXTO SIDEBAR */
+
 [data-testid="stSidebar"] * {
 
-    color: #1f2937 !important;
+    color: #111827 !important;
 }
+
+/* TÍTULOS */
 
 h1 {
 
@@ -70,6 +80,38 @@ h2, h3 {
     color: #1e293b !important;
 }
 
+/* INPUTS */
+
+.stNumberInput input {
+
+    background-color: white !important;
+
+    color: #111827 !important;
+}
+
+/* SLIDERS */
+
+.stSlider label {
+
+    color: #111827 !important;
+}
+
+/* SELECTBOX */
+
+.stSelectbox label {
+
+    color: #111827 !important;
+}
+
+/* RADIO */
+
+.stRadio label {
+
+    color: #111827 !important;
+}
+
+/* METRICS */
+
 [data-testid="metric-container"] {
 
     background-color: rgba(255,255,255,0.92);
@@ -84,6 +126,8 @@ h2, h3 {
         0px 4px 20px rgba(0,0,0,0.08);
 }
 
+/* BOTONES */
+
 .stButton > button {
 
     background: linear-gradient(
@@ -92,7 +136,7 @@ h2, h3 {
         #15803d
     );
 
-    color: white;
+    color: white !important;
 
     border: none;
 
@@ -103,6 +147,34 @@ h2, h3 {
     font-size: 16px;
 
     font-weight: 600;
+}
+
+/* ALERTAS */
+
+.stAlert {
+
+    border-radius: 14px;
+}
+
+/* SELECTBOX TEXTO */
+
+.stSelectbox div {
+
+    color: #111827 !important;
+}
+
+/* RADIO TEXTO */
+
+.stRadio div {
+
+    color: #111827 !important;
+}
+
+/* CAPTIONS */
+
+small {
+
+    color: #374151 !important;
 }
 
 </style>
