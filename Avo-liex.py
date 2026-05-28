@@ -512,7 +512,7 @@ elif menu == "Resultados":
         datos = st.session_state.resultado_simulacion
 
         st.subheader(
-            "Comparativa completa"
+            "Comparativa completa del proceso"
         )
 
         comparativa = {
@@ -526,22 +526,22 @@ elif menu == "Resultados":
                 "Costo total (Q)"
             ],
 
-            "Simulado": [
+            "Resultado simulado": [
 
-                round(datos["rendimiento"], 2),
-                round(datos["pureza"], 2),
-                round(datos["impacto"], 2),
-                round(datos["reciclaje"], 2),
-                round(datos["costo_total"], 2)
+                round(datos["rendimiento"], 1),
+                round(datos["pureza"], 1),
+                round(datos["impacto"], 1),
+                round(datos["reciclaje"], 1),
+                round(datos["costo_total"], 1)
             ],
 
-            "Teórico": [
+            "Valor teórico": [
 
-                round(datos["rendimiento_teorico"], 2),
-                round(datos["pureza_teorica"], 2),
-                round(datos["impacto_teorico"], 2),
-                round(datos["reciclaje_teorico"], 2),
-                round(datos["costo_teorico"], 2)
+                round(datos["rendimiento_teorico"], 1),
+                round(datos["pureza_teorica"], 1),
+                round(datos["impacto_teorico"], 1),
+                round(datos["reciclaje_teorico"], 1),
+                round(datos["costo_teorico"], 1)
             ],
 
             "Diferencia": [
@@ -549,36 +549,130 @@ elif menu == "Resultados":
                 round(
                     datos["rendimiento"]
                     - datos["rendimiento_teorico"],
-                    2
+                    1
                 ),
 
                 round(
                     datos["pureza"]
                     - datos["pureza_teorica"],
-                    2
+                    1
                 ),
 
                 round(
                     datos["impacto"]
                     - datos["impacto_teorico"],
-                    2
+                    1
                 ),
 
                 round(
                     datos["reciclaje"]
                     - datos["reciclaje_teorico"],
-                    2
+                    1
                 ),
 
                 round(
                     datos["costo_total"]
                     - datos["costo_teorico"],
-                    2
+                    1
                 )
+            ],
+
+            "Estado": [
+
+                "Óptimo"
+                if datos["rendimiento"]
+                >= datos["rendimiento_teorico"]
+                else "Mejorable",
+
+                "Alta"
+                if datos["pureza"]
+                >= datos["pureza_teorica"]
+                else "Moderada",
+
+                "Bajo"
+                if datos["impacto"]
+                <= datos["impacto_teorico"]
+                else "Elevado",
+
+                "Eficiente"
+                if datos["reciclaje"]
+                >= datos["reciclaje_teorico"]
+                else "Moderado",
+
+                "Óptimo"
+                if datos["costo_total"]
+                <= datos["costo_teorico"]
+                else "Elevado"
             ]
         }
 
         st.table(comparativa)
+
+        st.divider()
+
+        st.subheader(
+            "Recomendaciones del simulador"
+        )
+
+        if datos["rendimiento"] < datos["rendimiento_teorico"]:
+
+            st.warning(
+                "Se recomienda aumentar la eficiencia de lavado para mejorar el rendimiento del proceso."
+            )
+
+        else:
+
+            st.success(
+                "El rendimiento obtenido es óptimo respecto al valor teórico."
+            )
+
+        if datos["costo_total"] > datos["costo_teorico"]:
+
+            st.warning(
+                "El costo operativo es superior al esperado. Se recomienda reducir tiempos de operación."
+            )
+
+        else:
+
+            st.success(
+                "El costo operativo es eficiente para las condiciones seleccionadas."
+            )
+
+        if datos["impacto"] > datos["impacto_teorico"]:
+
+            st.warning(
+                "El impacto ambiental es elevado. Se recomienda aumentar el reciclaje de hexano."
+            )
+
+        else:
+
+            st.success(
+                "El proceso presenta buenas condiciones de sostenibilidad."
+            )
+
+        if datos["pureza"] >= datos["pureza_teorica"]:
+
+            st.success(
+                "La calidad del aceite es adecuada para procesos de alta pureza."
+            )
+
+        else:
+
+            st.warning(
+                "La pureza obtenida es menor al valor esperado."
+            )
+
+        if datos["tipo_muestra"] == "Pulpa de aguacate":
+
+            st.info(
+                "La pulpa de aguacate presenta mayor rendimiento y calidad respecto a la cáscara."
+            )
+
+        else:
+
+            st.info(
+                "La cáscara presenta menor rendimiento, pero puede aprovecharse como subproducto sostenible."
+            )
 
         st.divider()
 
@@ -701,4 +795,4 @@ elif menu == "Resultados":
                 "Impacto (%)"
             )
 
-            st.pyplot(fig) 
+            st.pyplot(fig)
