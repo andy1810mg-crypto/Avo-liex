@@ -37,7 +37,7 @@ st.markdown("""
 
     background-color: #edf4e8;
 
-    border-right: 1px solid #cbd5c0;
+    border-right: 1px solid #c7d2c0;
 }
 
 /* Texto general */
@@ -167,7 +167,7 @@ hr {
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------
-# HEADER PRINCIPAL
+# HEADER
 # ---------------------------------------------------
 
 col1, col2, col3 = st.columns([1,4,2])
@@ -202,12 +202,6 @@ st.divider()
 
 st.sidebar.title("Panel de navegación")
 
-st.sidebar.caption(
-    "Seleccione una sección."
-)
-
-st.sidebar.divider()
-
 menu = st.sidebar.radio(
     "",
     [
@@ -217,6 +211,15 @@ menu = st.sidebar.radio(
         "Resultados"
     ]
 )
+
+# ---------------------------------------------------
+# VARIABLES GLOBALES
+# ---------------------------------------------------
+
+rendimiento = 0
+aceite_recuperado = 0
+hexano_recuperado = 0
+eficiencia_global = 0
 
 # ---------------------------------------------------
 # INICIO
@@ -236,8 +239,6 @@ if menu == "Inicio":
     st.divider()
 
     st.info("""
-    Manual rápido de uso:
-
     1. Seleccione el tipo de muestra.
     2. Ingrese las variables operativas.
     3. Ejecute la simulación.
@@ -259,7 +260,7 @@ if menu == "Inicio":
     )
 
     col3.metric(
-        "Rendimiento esperado",
+        "Rendimiento teórico",
         "55.3 %"
     )
 
@@ -271,17 +272,7 @@ elif menu == "Simulador":
 
     st.header("Simulación del proceso")
 
-    st.progress(75)
-
-    st.caption(
-        "Sistema listo para ejecutar simulación."
-    )
-
     st.divider()
-
-    # ---------------------------------------------------
-    # TIPO DE MUESTRA
-    # ---------------------------------------------------
 
     st.subheader("Tipo de muestra")
 
@@ -294,10 +285,6 @@ elif menu == "Simulador":
     )
 
     st.divider()
-
-    # ---------------------------------------------------
-    # VARIABLES DE ENTRADA
-    # ---------------------------------------------------
 
     col1, col2 = st.columns(2)
 
@@ -335,8 +322,7 @@ elif menu == "Simulador":
             "Volumen de hexano (mL)",
             min_value=100.0,
             max_value=2000.0,
-            value=500.0,
-            help="Cantidad de hexano utilizada como solvente."
+            value=500.0
         )
 
         st.caption(
@@ -362,10 +348,6 @@ elif menu == "Simulador":
         )
 
     st.divider()
-
-    # ---------------------------------------------------
-    # BOTÓN
-    # ---------------------------------------------------
 
     if st.button("Iniciar simulación"):
 
@@ -434,20 +416,11 @@ elif menu == "Simulador":
             "Simulación ejecutada correctamente."
         )
 
-        st.divider()
-
-        st.metric(
-            "Producción estimada de aceite",
-            f"{aceite_recuperado:.2f} g"
-        )
-
-        st.divider()
-
         col1, col2, col3 = st.columns(3)
 
         col1.metric(
-            "Agua eliminada",
-            f"{agua_eliminada:.2f} g"
+            "Aceite recuperado",
+            f"{aceite_recuperado:.2f} g"
         )
 
         col2.metric(
@@ -460,99 +433,185 @@ elif menu == "Simulador":
             f"{hexano_recuperado:.2f} mL"
         )
 
-        col4, col5, col6 = st.columns(3)
-
-        col4.metric(
-            "Eficiencia global",
-            f"{eficiencia_global:.2f} %"
-        )
-
-        col5.metric(
-            "Ciclos de lavado",
-            f"{ciclos}"
-        )
-
-        col6.metric(
-            "Tipo de muestra",
-            tipo_muestra
-        )
-
         st.divider()
 
         # ---------------------------------------------------
-        # ALERTAS
-        # ---------------------------------------------------
-
-        st.subheader("Estado del sistema")
-
-        if temperatura > 78.5:
-
-            st.error(
-                "Temperatura fuera del rango recomendado."
-            )
-
-        elif temperatura < 70:
-
-            st.warning(
-                "Temperatura baja: posible reducción del rendimiento."
-            )
-
-        else:
-
-            st.success(
-                "Temperatura dentro del rango óptimo."
-            )
-
-        if ciclos > 10:
-
-            st.warning(
-                "Número elevado de ciclos de lavado."
-            )
-
-        else:
-
-            st.success(
-                "Número de ciclos adecuado."
-            )
-
-        if humedad > 80:
-
-            st.error(
-                "Humedad excesiva."
-            )
-
-        st.divider()
-
-        # ---------------------------------------------------
-        # GRÁFICA
+        # VALIDACIÓN
         # ---------------------------------------------------
 
         st.subheader(
-            "Distribución estimada del proceso"
+            "Comparación teórica vs simulada"
         )
 
-        etiquetas = [
-            "Aceite",
-            "Agua",
-            "Residuos"
-        ]
+        rendimiento_teorico = 55.3
 
-        valores = [
-            aceite_recuperado,
-            agua_eliminada,
-            residuos
-        ]
-
-        fig, ax = plt.subplots()
-
-        ax.pie(
-            valores,
-            labels=etiquetas,
-            autopct='%1.1f%%',
-            startangle=90
+        diferencia = (
+            rendimiento - rendimiento_teorico
         )
 
-        st.pyplot(fig)
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "Resultado simulado",
+            f"{rendimiento:.2f} %"
+        )
+
+        col2.metric(
+            "Resultado teórico",
+            f"{rendimiento_teorico:.2f} %"
+        )
+
+        col3.metric(
+            "Diferencia",
+            f"{diferencia:.2f} %"
+        )
+
+        st.divider()
+
+        # ---------------------------------------------------
+        # RESUMEN
+        # ---------------------------------------------------
+
+        st.subheader("Resumen del proceso")
+
+        if rendimiento >= 55:
+
+            st.success(
+                "El sistema presenta un rendimiento cercano al valor teórico esperado."
+            )
+
+        elif rendimiento >= 40:
+
+            st.warning(
+                "El sistema presenta una eficiencia moderada."
+            )
+
+        else:
+
+            st.error(
+                "El rendimiento obtenido es bajo respecto al esperado."
+            )
+
+        st.divider()
+
+        # ---------------------------------------------------
+        # SELECTOR DE GRÁFICAS
+        # ---------------------------------------------------
+
+        opcion_grafica = st.selectbox(
+            "Seleccione la visualización",
+            [
+                "Solo resultados",
+                "Distribución del proceso",
+                "Rendimiento vs Temperatura",
+                "Comparación teórica"
+            ]
+        )
+
+        # ---------------------------------------------------
+        # GRÁFICA 1
+        # ---------------------------------------------------
+
+        if opcion_grafica == "Distribución del proceso":
+
+            etiquetas = [
+                "Aceite",
+                "Agua",
+                "Residuos"
+            ]
+
+            valores = [
+                aceite_recuperado,
+                agua_eliminada,
+                residuos
+            ]
+
+            fig, ax = plt.subplots(
+                figsize=(5,4)
+            )
+
+            ax.pie(
+                valores,
+                labels=etiquetas,
+                autopct='%1.1f%%',
+                startangle=90
+            )
+
+            st.pyplot(fig)
+
+        # ---------------------------------------------------
+        # GRÁFICA 2
+        # ---------------------------------------------------
+
+        elif opcion_grafica == "Rendimiento vs Temperatura":
+
+            temperaturas = [50, 60, 70, 75, 80, 90]
+
+            rendimiento_temp = [30, 40, 50, 55.3, 48, 35]
+
+            fig, ax = plt.subplots(
+                figsize=(6,4)
+            )
+
+            ax.plot(
+                temperaturas,
+                rendimiento_temp,
+                marker='o',
+                linewidth=3,
+                color="#15803d"
+            )
+
+            ax.set_title(
+                "Rendimiento vs Temperatura"
+            )
+
+            ax.set_xlabel(
+                "Temperatura (°C)"
+            )
+
+            ax.set_ylabel(
+                "Rendimiento (%)"
+            )
+
+            ax.grid(True)
+
+            st.pyplot(fig)
+
+        # ---------------------------------------------------
+        # GRÁFICA 3
+        # ---------------------------------------------------
+
+        elif opcion_grafica == "Comparación teórica":
+
+            categorias = [
+                "Simulado",
+                "Teórico"
+            ]
+
+            valores = [
+                rendimiento,
+                rendimiento_teorico
+            ]
+
+            fig, ax = plt.subplots(
+                figsize=(5,4)
+            )
+
+            ax.bar(
+                categorias,
+                valores,
+                color=["#16a34a", "#14532d"]
+            )
+
+            ax.set_ylabel(
+                "Rendimiento (%)"
+            )
+
+            ax.set_title(
+                "Comparación de rendimiento"
+            )
+
+            st.pyplot(fig)
 
 # ---------------------------------------------------
 # PANEL DE CONTROL
@@ -561,11 +620,6 @@ elif menu == "Simulador":
 elif menu == "Panel de Control":
 
     st.header("Panel de control industrial")
-
-    st.write("""
-    Monitoreo de variables críticas del proceso
-    de extracción sólido-líquido.
-    """)
 
     st.divider()
 
@@ -646,37 +700,22 @@ elif menu == "Panel de Control":
 
 elif menu == "Resultados":
 
-    st.header("Análisis de resultados")
+    st.header("Resultados generales")
 
-    temperaturas = [50, 60, 70, 75, 80, 90]
+    st.info("""
+    Esta sección muestra el análisis general
+    del comportamiento del sistema de extracción.
+    """)
 
-    rendimiento = [30, 40, 50, 55.3, 48, 35]
+    st.divider()
 
-    fig, ax = plt.subplots()
-
-    ax.plot(
-        temperaturas,
-        rendimiento,
-        marker='o',
-        linewidth=3,
-        color="#15803d"
+    st.metric(
+        "Rendimiento teórico de referencia",
+        "55.3 %"
     )
 
-    ax.set_facecolor("#ffffff")
-
-    ax.set_title(
-        "Rendimiento vs Temperatura"
+    st.metric(
+        "Recuperación esperada de hexano",
+        "80 %"
     )
-
-    ax.set_xlabel(
-        "Temperatura (°C)"
-    )
-
-    ax.set_ylabel(
-        "Rendimiento (%)"
-    )
-
-    ax.grid(True)
-
-    st.pyplot(fig)
     
