@@ -70,11 +70,6 @@ h2, h3 {
     color: #1e293b !important;
 }
 
-p {
-
-    color: #374151;
-}
-
 [data-testid="metric-container"] {
 
     background-color: rgba(255,255,255,0.92);
@@ -87,15 +82,6 @@ p {
 
     box-shadow:
         0px 4px 20px rgba(0,0,0,0.08);
-
-    transition: 0.3s;
-}
-
-[data-testid="metric-container"]:hover {
-
-    transform: translateY(-3px);
-
-    border: 1px solid #22c55e;
 }
 
 .stButton > button {
@@ -117,13 +103,6 @@ p {
     font-size: 16px;
 
     font-weight: 600;
-}
-
-.stNumberInput input {
-
-    background-color: white;
-
-    color: #111827;
 }
 
 </style>
@@ -170,7 +149,6 @@ menu = st.sidebar.radio(
     [
         "Inicio",
         "Simulador",
-        "Dashboard",
         "Panel de Control",
         "Resultados"
     ]
@@ -195,10 +173,10 @@ if menu == "Inicio":
     1. Seleccione el tipo de muestra.
     2. Ingrese variables operativas.
     3. Ejecute la simulación.
-    4. Revise Dashboard y Resultados.
+    4. Revise resultados y comparaciones.
     """)
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     col1.metric(
         "Temperatura recomendada",
@@ -211,11 +189,6 @@ if menu == "Inicio":
     )
 
     col3.metric(
-        "Recuperación de hexano",
-        "80 %"
-    )
-
-    col4.metric(
         "Rendimiento esperado",
         "55.3 %"
     )
@@ -228,10 +201,9 @@ elif menu == "Simulador":
 
     st.header("Simulación del proceso")
 
-    tab1, tab2, tab3 = st.tabs([
+    tab1, tab2 = st.tabs([
         "Operación",
-        "Costos y sostenibilidad",
-        "Calidad del aceite"
+        "Calidad y sostenibilidad"
     ])
 
     # ---------------------------------------------------
@@ -309,60 +281,67 @@ elif menu == "Simulador":
                 5
             )
 
-        lote = st.selectbox(
-            "Tamaño de lote",
-            [
-                "Laboratorio",
-                "Piloto",
-                "Industrial"
-            ]
-        )
+        st.divider()
 
         col1, col2, col3 = st.columns(3)
 
-        tiempo_extraccion = col1.number_input(
-            "Tiempo de extracción (min)",
-            min_value=1,
-            max_value=120,
-            value=15
-        )
+        with col1:
 
-        tiempo_evaporacion = col2.number_input(
-            "Tiempo de evaporación (min)",
-            min_value=1,
-            max_value=120,
-            value=20
-        )
+            st.caption(
+                "Rango recomendado: 10 - 30 min"
+            )
 
-        tiempo_enfriamiento = col3.number_input(
-            "Tiempo de enfriamiento (min)",
-            min_value=1,
-            max_value=60,
-            value=10
-        )
+            tiempo_extraccion = st.number_input(
+                "Tiempo de extracción (min)",
+                min_value=1,
+                max_value=120,
+                value=15
+            )
+
+        with col2:
+
+            st.caption(
+                "Rango recomendado: 15 - 40 min"
+            )
+
+            tiempo_evaporacion = st.number_input(
+                "Tiempo de evaporación (min)",
+                min_value=1,
+                max_value=120,
+                value=20
+            )
+
+        with col3:
+
+            st.caption(
+                "Rango recomendado: 5 - 20 min"
+            )
+
+            tiempo_enfriamiento = st.number_input(
+                "Tiempo de enfriamiento (min)",
+                min_value=1,
+                max_value=60,
+                value=10
+            )
 
     # ---------------------------------------------------
-    # TAB COSTOS
+    # TAB CALIDAD Y SOSTENIBILIDAD
     # ---------------------------------------------------
 
     with tab2:
 
-        costo_hexano = st.number_input(
-            "Costo de hexano ($)",
-            min_value=0.0,
-            value=25.0
+        pureza = st.slider(
+            "Pureza estimada (%)",
+            0,
+            100,
+            92
         )
 
-        costo_energia = st.number_input(
-            "Costo energético ($)",
-            min_value=0.0,
-            value=18.0
-        )
-
-        costo_materia = st.number_input(
-            "Costo de materia prima ($)",
-            min_value=0.0,
-            value=30.0
+        acidez = st.slider(
+            "Índice de acidez (mg KOH/g)",
+            0.0,
+            5.0,
+            1.2
         )
 
         reciclaje = st.slider(
@@ -377,26 +356,6 @@ elif menu == "Simulador":
             0,
             100,
             35
-        )
-
-    # ---------------------------------------------------
-    # TAB CALIDAD
-    # ---------------------------------------------------
-
-    with tab3:
-
-        pureza = st.slider(
-            "Pureza estimada (%)",
-            0,
-            100,
-            92
-        )
-
-        acidez = st.slider(
-            "Índice de acidez (mg KOH/g)",
-            0.0,
-            5.0,
-            1.2
         )
 
         if pureza > 90:
@@ -418,19 +377,6 @@ elif menu == "Simulador":
             )
 
     # ---------------------------------------------------
-    # MODOS
-    # ---------------------------------------------------
-
-    modo = st.selectbox(
-        "Modo de simulación",
-        [
-            "Operación normal",
-            "Optimización automática",
-            "¿Qué pasaría si...?"
-        ]
-    )
-
-    # ---------------------------------------------------
     # BOTÓN
     # ---------------------------------------------------
 
@@ -446,12 +392,6 @@ elif menu == "Simulador":
             porcentaje_aceite = 0.05
             eficiencia_base = 0.32
 
-        if modo == "Optimización automática":
-
-            temperatura = 75
-            ciclos = 8
-            humedad = 20
-
         agua_eliminada = (
             masa_muestra * (humedad / 100)
         )
@@ -465,6 +405,7 @@ elif menu == "Simulador":
         )
 
         if eficiencia_ciclos > 0.75:
+
             eficiencia_ciclos = 0.75
 
         aceite_recuperado = (
@@ -489,11 +430,30 @@ elif menu == "Simulador":
             - aceite_recuperado
         )
 
+        # ---------------------------------------------------
+        # COSTOS AUTOMÁTICOS
+        # ---------------------------------------------------
+
+        costo_hexano = (
+            hexano * 0.08
+        )
+
+        costo_energia = (
+            (
+                tiempo_extraccion
+                + tiempo_evaporacion
+                + tiempo_enfriamiento
+            ) * 0.15
+        )
+
         costo_total = (
             costo_hexano
             + costo_energia
-            + costo_materia
         )
+
+        # ---------------------------------------------------
+        # GUARDAR RESULTADOS
+        # ---------------------------------------------------
 
         st.session_state.resultado_simulacion = {
 
@@ -507,57 +467,15 @@ elif menu == "Simulador":
             "acidez": acidez,
             "impacto": impacto,
             "costo_total": costo_total,
+            "costo_hexano": costo_hexano,
+            "costo_energia": costo_energia,
             "temperatura": temperatura,
             "ciclos": ciclos,
-            "modo": modo
+            "tipo_muestra": tipo_muestra
         }
 
         st.success(
             "Simulación ejecutada correctamente."
-        )
-
-# ---------------------------------------------------
-# DASHBOARD
-# ---------------------------------------------------
-
-elif menu == "Dashboard":
-
-    st.header("Dashboard industrial")
-
-    if st.session_state.resultado_simulacion is None:
-
-        st.warning(
-            "Primero debe ejecutar una simulación."
-        )
-
-    else:
-
-        datos = st.session_state.resultado_simulacion
-
-        col1, col2, col3, col4 = st.columns(4)
-
-        col1.metric(
-            "Rendimiento",
-            f"{datos['rendimiento']:.2f} %"
-        )
-
-        col2.metric(
-            "Pureza",
-            f"{datos['pureza']} %"
-        )
-
-        col3.metric(
-            "Hexano recuperado",
-            f"{datos['hexano_recuperado']:.2f} mL"
-        )
-
-        col4.metric(
-            "Costo total",
-            f"${datos['costo_total']:.2f}"
-        )
-
-        st.progress(
-            int(datos['rendimiento'])
         )
 
 # ---------------------------------------------------
@@ -576,7 +494,7 @@ elif menu == "Panel de Control":
     )
 
     ciclos_panel = st.slider(
-        "Ciclos de lavado",
+        "Ciclos de lavado del sistema",
         1,
         15,
         5
@@ -589,6 +507,8 @@ elif menu == "Panel de Control":
         3
     )
 
+    st.divider()
+
     if 70 <= temperatura_panel <= 78.5:
 
         st.success(
@@ -599,6 +519,30 @@ elif menu == "Panel de Control":
 
         st.error(
             "Temperatura fuera de límites"
+        )
+
+    if 5 <= ciclos_panel <= 10:
+
+        st.success(
+            "Ciclos adecuados"
+        )
+
+    else:
+
+        st.warning(
+            "Ciclos fuera del rango"
+        )
+
+    if humedad_panel < 5:
+
+        st.success(
+            "Humedad controlada"
+        )
+
+    else:
+
+        st.error(
+            "Humedad elevada"
         )
 
 # ---------------------------------------------------
@@ -626,6 +570,10 @@ elif menu == "Resultados":
             - rendimiento_teorico
         )
 
+        # ---------------------------------------------------
+        # MÉTRICAS
+        # ---------------------------------------------------
+
         col1, col2, col3 = st.columns(3)
 
         col1.metric(
@@ -642,6 +590,97 @@ elif menu == "Resultados":
             "Diferencia",
             f"{diferencia:.2f} %"
         )
+
+        st.divider()
+
+        # ---------------------------------------------------
+        # INTERPRETACIÓN
+        # ---------------------------------------------------
+
+        st.subheader(
+            "Interpretación automática"
+        )
+
+        if datos["rendimiento"] >= 55:
+
+            st.success(
+                "El rendimiento obtenido es cercano al valor teórico esperado."
+            )
+
+        elif datos["rendimiento"] >= 40:
+
+            st.warning(
+                "El sistema presenta un rendimiento moderado."
+            )
+
+        else:
+
+            st.error(
+                "El rendimiento obtenido es bajo."
+            )
+
+        if datos["pureza"] > 90:
+
+            st.success(
+                "La calidad del aceite es alta."
+            )
+
+        elif datos["pureza"] > 70:
+
+            st.warning(
+                "La pureza del aceite es moderada."
+            )
+
+        else:
+
+            st.error(
+                "La calidad del aceite es baja."
+            )
+
+        if datos["impacto"] < 40:
+
+            st.success(
+                "El impacto ambiental estimado es bajo."
+            )
+
+        else:
+
+            st.warning(
+                "El proceso presenta impacto ambiental moderado."
+            )
+
+        st.divider()
+
+        # ---------------------------------------------------
+        # ANÁLISIS ECONÓMICO
+        # ---------------------------------------------------
+
+        st.subheader(
+            "Análisis económico"
+        )
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "Costo de hexano",
+            f"Q {datos['costo_hexano']:.2f}"
+        )
+
+        col2.metric(
+            "Costo energético",
+            f"Q {datos['costo_energia']:.2f}"
+        )
+
+        col3.metric(
+            "Costo total",
+            f"Q {datos['costo_total']:.2f}"
+        )
+
+        st.divider()
+
+        # ---------------------------------------------------
+        # SELECTOR DE GRÁFICAS
+        # ---------------------------------------------------
 
         opcion_grafica = st.selectbox(
             "Seleccione visualización",
@@ -753,10 +792,14 @@ elif menu == "Resultados":
         elif opcion_grafica == "Costos del proceso":
 
             categorias = [
-                "Costo total"
+                "Hexano",
+                "Energía",
+                "Total"
             ]
 
             valores = [
+                datos["costo_hexano"],
+                datos["costo_energia"],
                 datos["costo_total"]
             ]
 
@@ -767,11 +810,15 @@ elif menu == "Resultados":
             ax.bar(
                 categorias,
                 valores,
-                color='#166534'
+                color=[
+                    '#16a34a',
+                    '#15803d',
+                    '#166534'
+                ]
             )
 
             ax.set_ylabel(
-                'Costo ($)'
+                'Costo (Q)'
             )
 
             st.pyplot(fig)
