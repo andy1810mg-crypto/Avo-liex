@@ -331,50 +331,28 @@ elif menu == "Simulador":
 
     col1, col2, col3 = st.columns(3)
 
-    with col1:
+    tiempo_extraccion = col1.number_input(
+        "Tiempo de extracción (min)",
+        min_value=1,
+        max_value=120,
+        value=15
+    )
 
-        st.caption(
-            "Rango recomendado: 10 - 30 min"
-        )
+    tiempo_evaporacion = col2.number_input(
+        "Tiempo de evaporación (min)",
+        min_value=1,
+        max_value=120,
+        value=20
+    )
 
-        tiempo_extraccion = st.number_input(
-            "Tiempo de extracción (min)",
-            min_value=1,
-            max_value=120,
-            value=15
-        )
-
-    with col2:
-
-        st.caption(
-            "Rango recomendado: 15 - 40 min"
-        )
-
-        tiempo_evaporacion = st.number_input(
-            "Tiempo de evaporación (min)",
-            min_value=1,
-            max_value=120,
-            value=20
-        )
-
-    with col3:
-
-        st.caption(
-            "Rango recomendado: 5 - 20 min"
-        )
-
-        tiempo_enfriamiento = st.number_input(
-            "Tiempo de enfriamiento (min)",
-            min_value=1,
-            max_value=60,
-            value=10
-        )
+    tiempo_enfriamiento = col3.number_input(
+        "Tiempo de enfriamiento (min)",
+        min_value=1,
+        max_value=60,
+        value=10
+    )
 
     if st.button("Iniciar simulación"):
-
-        # ---------------------------------------------------
-        # LÓGICA DE MUESTRA
-        # ---------------------------------------------------
 
         if tipo_muestra == "Pulpa de aguacate":
 
@@ -434,10 +412,6 @@ elif menu == "Simulador":
             - aceite_recuperado
         )
 
-        # ---------------------------------------------------
-        # COSTOS AUTOMÁTICOS
-        # ---------------------------------------------------
-
         costo_hexano = (
             hexano * 0.08
         )
@@ -454,20 +428,6 @@ elif menu == "Simulador":
             costo_hexano
             + costo_energia
         )
-
-        # ---------------------------------------------------
-        # VALORES TEÓRICOS
-        # ---------------------------------------------------
-
-        rendimiento_teorico = 55.3
-        pureza_teorica = 95
-        reciclaje_teorico = 85
-        impacto_teorico = 30
-        costo_teorico = 120
-
-        # ---------------------------------------------------
-        # GUARDAR RESULTADOS
-        # ---------------------------------------------------
 
         st.session_state.resultado_simulacion = {
 
@@ -487,11 +447,11 @@ elif menu == "Simulador":
             "ciclos": ciclos,
             "tipo_muestra": tipo_muestra,
 
-            "rendimiento_teorico": rendimiento_teorico,
-            "pureza_teorica": pureza_teorica,
-            "reciclaje_teorico": reciclaje_teorico,
-            "impacto_teorico": impacto_teorico,
-            "costo_teorico": costo_teorico,
+            "rendimiento_teorico": 55.3,
+            "pureza_teorica": 95,
+            "reciclaje_teorico": 85,
+            "impacto_teorico": 30,
+            "costo_teorico": 120,
             "reciclaje": reciclaje
         }
 
@@ -521,8 +481,6 @@ elif menu == "Panel de Control":
         5
     )
 
-    st.divider()
-
     if 70 <= temperatura_panel <= 78.5:
 
         st.success(
@@ -533,18 +491,6 @@ elif menu == "Panel de Control":
 
         st.error(
             "Temperatura fuera de límites"
-        )
-
-    if 5 <= ciclos_panel <= 10:
-
-        st.success(
-            "Ciclos adecuados"
-        )
-
-    else:
-
-        st.warning(
-            "Ciclos fuera del rango"
         )
 
 # ---------------------------------------------------
@@ -569,110 +515,72 @@ elif menu == "Resultados":
             "Comparativa completa"
         )
 
-        col1, col2, col3 = st.columns(3)
+        comparativa = {
 
-        col1.metric(
-            "Rendimiento",
-            f"{datos['rendimiento']:.2f} %",
-            f"{datos['rendimiento'] - datos['rendimiento_teorico']:.2f} %"
-        )
+            "Parámetro": [
 
-        col2.metric(
-            "Pureza",
-            f"{datos['pureza']} %",
-            f"{datos['pureza'] - datos['pureza_teorica']} %"
-        )
+                "Rendimiento (%)",
+                "Pureza (%)",
+                "Impacto ambiental (%)",
+                "Hexano reciclado (%)",
+                "Costo total (Q)"
+            ],
 
-        col3.metric(
-            "Impacto ambiental",
-            f"{datos['impacto']} %",
-            f"{datos['impacto'] - datos['impacto_teorico']} %"
-        )
+            "Simulado": [
 
-        st.divider()
+                round(datos["rendimiento"], 2),
+                round(datos["pureza"], 2),
+                round(datos["impacto"], 2),
+                round(datos["reciclaje"], 2),
+                round(datos["costo_total"], 2)
+            ],
 
-        col1, col2, col3 = st.columns(3)
+            "Teórico": [
 
-        col1.metric(
-            "Hexano reciclado",
-            f"{datos['reciclaje']} %",
-            f"{datos['reciclaje'] - datos['reciclaje_teorico']} %"
-        )
+                round(datos["rendimiento_teorico"], 2),
+                round(datos["pureza_teorica"], 2),
+                round(datos["impacto_teorico"], 2),
+                round(datos["reciclaje_teorico"], 2),
+                round(datos["costo_teorico"], 2)
+            ],
 
-        col2.metric(
-            "Costo real",
-            f"Q {datos['costo_total']:.2f}",
-            f"Q {datos['costo_total'] - datos['costo_teorico']:.2f}"
-        )
+            "Diferencia": [
 
-        col3.metric(
-            "Aceite recuperado",
-            f"{datos['aceite_recuperado']:.2f} g"
-        )
+                round(
+                    datos["rendimiento"]
+                    - datos["rendimiento_teorico"],
+                    2
+                ),
 
-        st.divider()
+                round(
+                    datos["pureza"]
+                    - datos["pureza_teorica"],
+                    2
+                ),
 
-        # ---------------------------------------------------
-        # INTERPRETACIÓN AUTOMÁTICA
-        # ---------------------------------------------------
+                round(
+                    datos["impacto"]
+                    - datos["impacto_teorico"],
+                    2
+                ),
 
-        st.subheader(
-            "Interpretación automática"
-        )
+                round(
+                    datos["reciclaje"]
+                    - datos["reciclaje_teorico"],
+                    2
+                ),
 
-        if datos["rendimiento"] >= datos["rendimiento_teorico"]:
+                round(
+                    datos["costo_total"]
+                    - datos["costo_teorico"],
+                    2
+                )
+            ]
+        }
 
-            st.success(
-                "El sistema alcanzó un rendimiento óptimo respecto al valor teórico."
-            )
-
-        else:
-
-            st.warning(
-                "El rendimiento obtenido es inferior al esperado."
-            )
-
-        if datos["pureza"] >= datos["pureza_teorica"]:
-
-            st.success(
-                "La calidad del aceite es excelente."
-            )
-
-        else:
-
-            st.warning(
-                "La pureza del aceite es inferior al valor teórico."
-            )
-
-        if datos["impacto"] <= datos["impacto_teorico"]:
-
-            st.success(
-                "El impacto ambiental es bajo."
-            )
-
-        else:
-
-            st.warning(
-                "El impacto ambiental es superior al esperado."
-            )
-
-        if datos["costo_total"] <= datos["costo_teorico"]:
-
-            st.success(
-                "El proceso es económicamente eficiente."
-            )
-
-        else:
-
-            st.warning(
-                "El costo operativo es superior al esperado."
-            )
+        st.table(comparativa)
 
         st.divider()
-
-        # ---------------------------------------------------
-        # SELECTOR DE GRÁFICAS
-        # ---------------------------------------------------
 
         opcion_grafica = st.selectbox(
             "Seleccione visualización",
@@ -683,10 +591,6 @@ elif menu == "Resultados":
                 "Comparación ambiental"
             ]
         )
-
-        # ---------------------------------------------------
-        # DISTRIBUCIÓN
-        # ---------------------------------------------------
 
         if opcion_grafica == "Distribución del proceso":
 
@@ -714,10 +618,6 @@ elif menu == "Resultados":
             )
 
             st.pyplot(fig)
-
-        # ---------------------------------------------------
-        # RENDIMIENTO
-        # ---------------------------------------------------
 
         elif opcion_grafica == "Comparación de rendimiento":
 
@@ -747,10 +647,6 @@ elif menu == "Resultados":
 
             st.pyplot(fig)
 
-        # ---------------------------------------------------
-        # ECONOMÍA
-        # ---------------------------------------------------
-
         elif opcion_grafica == "Comparación económica":
 
             categorias = [
@@ -779,10 +675,6 @@ elif menu == "Resultados":
 
             st.pyplot(fig)
 
-        # ---------------------------------------------------
-        # IMPACTO
-        # ---------------------------------------------------
-
         elif opcion_grafica == "Comparación ambiental":
 
             categorias = [
@@ -809,5 +701,4 @@ elif menu == "Resultados":
                 "Impacto (%)"
             )
 
-            st.pyplot(fig)
-            
+            st.pyplot(fig) 
