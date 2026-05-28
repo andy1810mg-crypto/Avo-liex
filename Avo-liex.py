@@ -103,9 +103,20 @@ button[data-baseweb="tab"] {
     color: #111827 !important;
 }
 
-/* Inputs */
+/* INPUTS */
 
-.stNumberInput * {
+.stNumberInput input {
+
+    background-color: white !important;
+
+    color: #111827 !important;
+
+    border-radius: 8px !important;
+}
+
+/* BOTONES + Y - */
+
+button {
 
     color: #111827 !important;
 }
@@ -140,7 +151,7 @@ small {
         0px 4px 20px rgba(0,0,0,0.08);
 }
 
-/* Botones */
+/* Botones principales */
 
 .stButton > button {
 
@@ -495,10 +506,6 @@ elif menu == "Simulador":
             - aceite_recuperado
         )
 
-        # ---------------------------------------------------
-        # COSTOS AUTOMÁTICOS
-        # ---------------------------------------------------
-
         costo_hexano = (
             hexano * 0.08
         )
@@ -515,10 +522,6 @@ elif menu == "Simulador":
             costo_hexano
             + costo_energia
         )
-
-        # ---------------------------------------------------
-        # GUARDAR RESULTADOS
-        # ---------------------------------------------------
 
         st.session_state.resultado_simulacion = {
 
@@ -635,10 +638,6 @@ elif menu == "Resultados":
             - rendimiento_teorico
         )
 
-        # ---------------------------------------------------
-        # MÉTRICAS
-        # ---------------------------------------------------
-
         col1, col2, col3 = st.columns(3)
 
         col1.metric(
@@ -657,10 +656,6 @@ elif menu == "Resultados":
         )
 
         st.divider()
-
-        # ---------------------------------------------------
-        # INTERPRETACIÓN
-        # ---------------------------------------------------
 
         st.subheader(
             "Interpretación automática"
@@ -684,41 +679,7 @@ elif menu == "Resultados":
                 "El rendimiento obtenido es bajo."
             )
 
-        if datos["pureza"] > 90:
-
-            st.success(
-                "La calidad del aceite es alta."
-            )
-
-        elif datos["pureza"] > 70:
-
-            st.warning(
-                "La pureza del aceite es moderada."
-            )
-
-        else:
-
-            st.error(
-                "La calidad del aceite es baja."
-            )
-
-        if datos["impacto"] < 40:
-
-            st.success(
-                "El impacto ambiental estimado es bajo."
-            )
-
-        else:
-
-            st.warning(
-                "El proceso presenta impacto ambiental moderado."
-            )
-
         st.divider()
-
-        # ---------------------------------------------------
-        # ANÁLISIS ECONÓMICO
-        # ---------------------------------------------------
 
         st.subheader(
             "Análisis económico"
@@ -743,10 +704,6 @@ elif menu == "Resultados":
 
         st.divider()
 
-        # ---------------------------------------------------
-        # SELECTOR DE GRÁFICAS
-        # ---------------------------------------------------
-
         opcion_grafica = st.selectbox(
             "Seleccione visualización",
             [
@@ -756,10 +713,6 @@ elif menu == "Resultados":
                 "Costos del proceso"
             ]
         )
-
-        # ---------------------------------------------------
-        # DISTRIBUCIÓN
-        # ---------------------------------------------------
 
         if opcion_grafica == "Distribución del proceso":
 
@@ -787,10 +740,6 @@ elif menu == "Resultados":
             )
 
             st.pyplot(fig)
-
-        # ---------------------------------------------------
-        # COMPARACIÓN
-        # ---------------------------------------------------
 
         elif opcion_grafica == "Comparación teórica":
 
@@ -820,10 +769,6 @@ elif menu == "Resultados":
 
             st.pyplot(fig)
 
-        # ---------------------------------------------------
-        # TEMPERATURA
-        # ---------------------------------------------------
-
         elif opcion_grafica == "Rendimiento vs Temperatura":
 
             temperaturas = [
@@ -849,10 +794,6 @@ elif menu == "Resultados":
             ax.grid(True)
 
             st.pyplot(fig)
-
-        # ---------------------------------------------------
-        # COSTOS
-        # ---------------------------------------------------
 
         elif opcion_grafica == "Costos del proceso":
 
