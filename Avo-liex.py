@@ -121,21 +121,49 @@ button {
     color: #111827 !important;
 }
 
-/* Selectbox */
+/* SELECTBOX */
 
 .stSelectbox * {
 
     color: #111827 !important;
 }
 
-/* Captions */
+/* SELECTBOX DROPDOWN */
+
+[data-baseweb="select"] > div {
+
+    background-color: white !important;
+
+    color: #111827 !important;
+}
+
+/* OPCIONES DROPDOWN */
+
+ul {
+
+    background-color: white !important;
+}
+
+li {
+
+    color: #111827 !important;
+}
+
+/* HOVER */
+
+li:hover {
+
+    background-color: #d1fae5 !important;
+}
+
+/* CAPTIONS */
 
 small {
 
     color: #374151 !important;
 }
 
-/* Métricas */
+/* MÉTRICAS */
 
 [data-testid="metric-container"] {
 
@@ -151,7 +179,7 @@ small {
         0px 4px 20px rgba(0,0,0,0.08);
 }
 
-/* Botones principales */
+/* BOTONES PRINCIPALES */
 
 .stButton > button {
 
@@ -174,7 +202,7 @@ small {
     font-weight: 600;
 }
 
-/* Alertas */
+/* ALERTAS */
 
 .stAlert {
 
@@ -677,6 +705,36 @@ elif menu == "Resultados":
 
             st.error(
                 "El rendimiento obtenido es bajo."
+            )
+
+        if datos["pureza"] > 90:
+
+            st.success(
+                "La calidad del aceite es alta."
+            )
+
+        elif datos["pureza"] > 70:
+
+            st.warning(
+                "La pureza del aceite es moderada."
+            )
+
+        else:
+
+            st.error(
+                "La calidad del aceite es baja."
+            )
+
+        if datos["impacto"] < 40:
+
+            st.success(
+                "El impacto ambiental estimado es bajo."
+            )
+
+        else:
+
+            st.warning(
+                "El proceso presenta impacto ambiental moderado."
             )
 
         st.divider()
