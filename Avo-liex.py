@@ -1,3 +1,4 @@
+
 import streamlit as st
 import matplotlib.pyplot as plt
 
@@ -12,13 +13,19 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------
+# MEMORIA
+# ---------------------------------------------------
+
+if "resultado_simulacion" not in st.session_state:
+
+    st.session_state.resultado_simulacion = None
+
+# ---------------------------------------------------
 # ESTILO VISUAL
 # ---------------------------------------------------
 
 st.markdown("""
 <style>
-
-/* Fondo principal */
 
 [data-testid="stAppViewContainer"] {
 
@@ -31,16 +38,12 @@ st.markdown("""
     );
 }
 
-/* Sidebar */
-
 [data-testid="stSidebar"] {
 
     background-color: #edf4e8;
 
-    border-right: 1px solid #c7d2c0;
+    border-right: 1px solid #cbd5c0;
 }
-
-/* Texto general */
 
 html, body, [class*="css"] {
 
@@ -49,14 +52,10 @@ html, body, [class*="css"] {
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Sidebar texto */
-
 [data-testid="stSidebar"] * {
 
     color: #1f2937 !important;
 }
-
-/* Títulos */
 
 h1 {
 
@@ -72,14 +71,10 @@ h2, h3 {
     color: #1e293b !important;
 }
 
-/* Párrafos */
-
 p {
 
     color: #374151;
 }
-
-/* Tarjetas */
 
 [data-testid="metric-container"] {
 
@@ -103,8 +98,6 @@ p {
 
     border: 1px solid #22c55e;
 }
-
-/* Botones */
 
 .stButton > button {
 
@@ -140,8 +133,6 @@ p {
     );
 }
 
-/* Inputs */
-
 .stNumberInput input {
 
     background-color: white;
@@ -149,14 +140,10 @@ p {
     color: #111827;
 }
 
-/* Alertas */
-
 .stAlert {
 
     border-radius: 14px;
 }
-
-/* Separadores */
 
 hr {
 
@@ -207,19 +194,11 @@ menu = st.sidebar.radio(
     [
         "Inicio",
         "Simulador",
+        "Dashboard",
         "Panel de Control",
         "Resultados"
     ]
 )
-
-# ---------------------------------------------------
-# VARIABLES GLOBALES
-# ---------------------------------------------------
-
-rendimiento = 0
-aceite_recuperado = 0
-hexano_recuperado = 0
-eficiencia_global = 0
 
 # ---------------------------------------------------
 # INICIO
@@ -239,15 +218,18 @@ if menu == "Inicio":
     st.divider()
 
     st.info("""
+    Manual rápido de uso:
+
     1. Seleccione el tipo de muestra.
-    2. Ingrese las variables operativas.
+    2. Ingrese variables operativas.
     3. Ejecute la simulación.
-    4. Analice los resultados.
+    4. Revise el dashboard y resultados.
+    5. Compare valores simulados y teóricos.
     """)
 
     st.divider()
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     col1.metric(
         "Temperatura recomendada",
@@ -260,7 +242,12 @@ if menu == "Inicio":
     )
 
     col3.metric(
-        "Rendimiento teórico",
+        "Recuperación de hexano",
+        "80 %"
+    )
+
+    col4.metric(
+        "Rendimiento esperado",
         "55.3 %"
     )
 
@@ -272,104 +259,247 @@ elif menu == "Simulador":
 
     st.header("Simulación del proceso")
 
+    tab1, tab2, tab3 = st.tabs([
+        "Operación",
+        "Costos y sostenibilidad",
+        "Calidad del aceite"
+    ])
+
+    # ---------------------------------------------------
+    # TAB OPERACIÓN
+    # ---------------------------------------------------
+
+    with tab1:
+
+        st.subheader("Tipo de muestra")
+
+        tipo_muestra = st.radio(
+            "Seleccione el material a procesar",
+            [
+                "Pulpa de aguacate",
+                "Cáscara de aguacate"
+            ]
+        )
+
+        st.divider()
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            st.caption(
+                "Rango recomendado: 500 - 5000 g"
+            )
+
+            masa_muestra = st.number_input(
+                "Masa de muestra (g)",
+                min_value=100.0,
+                max_value=5000.0,
+                value=1000.0
+            )
+
+            st.caption(
+                "Rango recomendado: 0 - 80 %"
+            )
+
+            humedad = st.slider(
+                "Humedad de la muestra (%)",
+                0,
+                100,
+                75
+            )
+
+        with col2:
+
+            st.caption(
+                "Rango recomendado: 200 - 1500 mL"
+            )
+
+            hexano = st.number_input(
+                "Volumen de hexano (mL)",
+                min_value=100.0,
+                max_value=2000.0,
+                value=500.0
+            )
+
+            st.caption(
+                "Rango recomendado: 70 - 78.5 °C"
+            )
+
+            temperatura = st.slider(
+                "Temperatura de evaporación (°C)",
+                40,
+                100,
+                75
+            )
+
+            st.caption(
+                "Rango recomendado: 5 - 10 ciclos"
+            )
+
+            ciclos = st.slider(
+                "Ciclos de lavado",
+                1,
+                15,
+                5
+            )
+
+        st.divider()
+
+        st.subheader("Escalabilidad")
+
+        lote = st.selectbox(
+            "Tamaño de lote",
+            [
+                "Laboratorio",
+                "Piloto",
+                "Industrial"
+            ]
+        )
+
+        st.divider()
+
+        st.subheader("Tiempos del proceso")
+
+        col1, col2, col3 = st.columns(3)
+
+        tiempo_extraccion = col1.number_input(
+            "Extracción (min)",
+            min_value=1,
+            max_value=120,
+            value=15
+        )
+
+        tiempo_evaporacion = col2.number_input(
+            "Evaporación (min)",
+            min_value=1,
+            max_value=120,
+            value=20
+        )
+
+        tiempo_enfriamiento = col3.number_input(
+            "Enfriamiento (min)",
+            min_value=1,
+            max_value=60,
+            value=10
+        )
+
+    # ---------------------------------------------------
+    # TAB COSTOS
+    # ---------------------------------------------------
+
+    with tab2:
+
+        st.subheader("Costos operativos")
+
+        costo_hexano = st.number_input(
+            "Costo de hexano ($)",
+            min_value=0.0,
+            value=25.0
+        )
+
+        costo_energia = st.number_input(
+            "Costo energético ($)",
+            min_value=0.0,
+            value=18.0
+        )
+
+        costo_materia = st.number_input(
+            "Costo de materia prima ($)",
+            min_value=0.0,
+            value=30.0
+        )
+
+        st.divider()
+
+        st.subheader("Sostenibilidad")
+
+        reciclaje = st.slider(
+            "Hexano reciclado (%)",
+            0,
+            100,
+            80
+        )
+
+        impacto = st.slider(
+            "Impacto ambiental estimado",
+            0,
+            100,
+            35
+        )
+
+    # ---------------------------------------------------
+    # TAB CALIDAD
+    # ---------------------------------------------------
+
+    with tab3:
+
+        st.subheader("Calidad del aceite")
+
+        pureza = st.slider(
+            "Pureza estimada (%)",
+            0,
+            100,
+            92
+        )
+
+        acidez = st.slider(
+            "Índice de acidez (mg KOH/g)",
+            0.0,
+            5.0,
+            1.2
+        )
+
+        if pureza > 90:
+
+            st.success(
+                "Aceite de alta calidad"
+            )
+
+        elif pureza > 70:
+
+            st.warning(
+                "Calidad moderada"
+            )
+
+        else:
+
+            st.error(
+                "Calidad baja"
+            )
+
     st.divider()
 
-    st.subheader("Tipo de muestra")
+    # ---------------------------------------------------
+    # MODOS DE SIMULACIÓN
+    # ---------------------------------------------------
 
-    tipo_muestra = st.radio(
-        "Seleccione el material a procesar",
+    modo = st.selectbox(
+        "Modo de simulación",
         [
-            "Pulpa de aguacate",
-            "Cáscara de aguacate"
+            "Operación normal",
+            "Optimización automática",
+            "¿Qué pasaría si...?"
         ]
     )
 
     st.divider()
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        st.caption(
-            "Rango recomendado: 500 - 5000 g"
-        )
-
-        masa_muestra = st.number_input(
-            "Masa de muestra (g)",
-            min_value=100.0,
-            max_value=5000.0,
-            value=1000.0
-        )
-
-        st.caption(
-            "Rango recomendado: 0 - 80 %"
-        )
-
-        humedad = st.slider(
-            "Humedad de la muestra (%)",
-            0,
-            100,
-            75
-        )
-
-    with col2:
-
-        st.caption(
-            "Rango recomendado: 200 - 1500 mL"
-        )
-
-        hexano = st.number_input(
-            "Volumen de hexano (mL)",
-            min_value=100.0,
-            max_value=2000.0,
-            value=500.0
-        )
-
-        st.caption(
-            "Rango recomendado: 70 - 78.5 °C"
-        )
-
-        temperatura = st.slider(
-            "Temperatura de evaporación (°C)",
-            40,
-            100,
-            75
-        )
-
-        st.caption(
-            "Rango recomendado: 5 - 10 ciclos"
-        )
-
-        ciclos = st.slider(
-            "Ciclos de lavado",
-            1,
-            15,
-            5
-        )
-
-    st.divider()
+    # ---------------------------------------------------
+    # BOTÓN
+    # ---------------------------------------------------
 
     if st.button("Iniciar simulación"):
-
-        # ---------------------------------------------------
-        # DIFERENCIA ENTRE MUESTRAS
-        # ---------------------------------------------------
 
         if tipo_muestra == "Pulpa de aguacate":
 
             porcentaje_aceite = 0.15
-
             eficiencia_base = 0.553
 
         else:
 
             porcentaje_aceite = 0.05
-
             eficiencia_base = 0.32
-
-        # ---------------------------------------------------
-        # CÁLCULOS
-        # ---------------------------------------------------
 
         agua_eliminada = (
             masa_muestra * (humedad / 100)
@@ -391,7 +521,7 @@ elif menu == "Simulador":
         )
 
         hexano_recuperado = (
-            hexano * 0.80
+            hexano * (reciclaje / 100)
         )
 
         rendimiento = (
@@ -408,210 +538,85 @@ elif menu == "Simulador":
             - aceite_recuperado
         )
 
+        costo_total = (
+            costo_hexano
+            + costo_energia
+            + costo_materia
+        )
+
         # ---------------------------------------------------
-        # RESULTADOS
+        # GUARDAR RESULTADOS
         # ---------------------------------------------------
+
+        st.session_state.resultado_simulacion = {
+
+            "aceite_recuperado": aceite_recuperado,
+            "agua_eliminada": agua_eliminada,
+            "hexano_recuperado": hexano_recuperado,
+            "rendimiento": rendimiento,
+            "eficiencia_global": eficiencia_global,
+            "residuos": residuos,
+            "pureza": pureza,
+            "acidez": acidez,
+            "impacto": impacto,
+            "costo_total": costo_total,
+            "temperatura": temperatura,
+            "ciclos": ciclos,
+            "modo": modo,
+            "lote": lote
+        }
 
         st.success(
             "Simulación ejecutada correctamente."
         )
 
-        col1, col2, col3 = st.columns(3)
+# ---------------------------------------------------
+# DASHBOARD
+# ---------------------------------------------------
 
-        col1.metric(
-            "Aceite recuperado",
-            f"{aceite_recuperado:.2f} g"
+elif menu == "Dashboard":
+
+    st.header("Dashboard industrial")
+
+    if st.session_state.resultado_simulacion is None:
+
+        st.warning(
+            "Primero debe ejecutar una simulación."
         )
 
-        col2.metric(
+    else:
+
+        datos = st.session_state.resultado_simulacion
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        col1.metric(
             "Rendimiento",
-            f"{rendimiento:.2f} %"
-        )
-
-        col3.metric(
-            "Hexano recuperado",
-            f"{hexano_recuperado:.2f} mL"
-        )
-
-        st.divider()
-
-        # ---------------------------------------------------
-        # VALIDACIÓN
-        # ---------------------------------------------------
-
-        st.subheader(
-            "Comparación teórica vs simulada"
-        )
-
-        rendimiento_teorico = 55.3
-
-        diferencia = (
-            rendimiento - rendimiento_teorico
-        )
-
-        col1, col2, col3 = st.columns(3)
-
-        col1.metric(
-            "Resultado simulado",
-            f"{rendimiento:.2f} %"
+            f"{datos['rendimiento']:.2f} %"
         )
 
         col2.metric(
-            "Resultado teórico",
-            f"{rendimiento_teorico:.2f} %"
+            "Pureza",
+            f"{datos['pureza']} %"
         )
 
         col3.metric(
-            "Diferencia",
-            f"{diferencia:.2f} %"
+            "Hexano reciclado",
+            f"{datos['hexano_recuperado']:.2f} mL"
+        )
+
+        col4.metric(
+            "Costo total",
+            f"${datos['costo_total']:.2f}"
         )
 
         st.divider()
 
-        # ---------------------------------------------------
-        # RESUMEN
-        # ---------------------------------------------------
+        st.progress(int(datos['rendimiento']))
 
-        st.subheader("Resumen del proceso")
-
-        if rendimiento >= 55:
-
-            st.success(
-                "El sistema presenta un rendimiento cercano al valor teórico esperado."
-            )
-
-        elif rendimiento >= 40:
-
-            st.warning(
-                "El sistema presenta una eficiencia moderada."
-            )
-
-        else:
-
-            st.error(
-                "El rendimiento obtenido es bajo respecto al esperado."
-            )
-
-        st.divider()
-
-        # ---------------------------------------------------
-        # SELECTOR DE GRÁFICAS
-        # ---------------------------------------------------
-
-        opcion_grafica = st.selectbox(
-            "Seleccione la visualización",
-            [
-                "Solo resultados",
-                "Distribución del proceso",
-                "Rendimiento vs Temperatura",
-                "Comparación teórica"
-            ]
+        st.caption(
+            "Estado general del sistema"
         )
-
-        # ---------------------------------------------------
-        # GRÁFICA 1
-        # ---------------------------------------------------
-
-        if opcion_grafica == "Distribución del proceso":
-
-            etiquetas = [
-                "Aceite",
-                "Agua",
-                "Residuos"
-            ]
-
-            valores = [
-                aceite_recuperado,
-                agua_eliminada,
-                residuos
-            ]
-
-            fig, ax = plt.subplots(
-                figsize=(5,4)
-            )
-
-            ax.pie(
-                valores,
-                labels=etiquetas,
-                autopct='%1.1f%%',
-                startangle=90
-            )
-
-            st.pyplot(fig)
-
-        # ---------------------------------------------------
-        # GRÁFICA 2
-        # ---------------------------------------------------
-
-        elif opcion_grafica == "Rendimiento vs Temperatura":
-
-            temperaturas = [50, 60, 70, 75, 80, 90]
-
-            rendimiento_temp = [30, 40, 50, 55.3, 48, 35]
-
-            fig, ax = plt.subplots(
-                figsize=(6,4)
-            )
-
-            ax.plot(
-                temperaturas,
-                rendimiento_temp,
-                marker='o',
-                linewidth=3,
-                color="#15803d"
-            )
-
-            ax.set_title(
-                "Rendimiento vs Temperatura"
-            )
-
-            ax.set_xlabel(
-                "Temperatura (°C)"
-            )
-
-            ax.set_ylabel(
-                "Rendimiento (%)"
-            )
-
-            ax.grid(True)
-
-            st.pyplot(fig)
-
-        # ---------------------------------------------------
-        # GRÁFICA 3
-        # ---------------------------------------------------
-
-        elif opcion_grafica == "Comparación teórica":
-
-            categorias = [
-                "Simulado",
-                "Teórico"
-            ]
-
-            valores = [
-                rendimiento,
-                rendimiento_teorico
-            ]
-
-            fig, ax = plt.subplots(
-                figsize=(5,4)
-            )
-
-            ax.bar(
-                categorias,
-                valores,
-                color=["#16a34a", "#14532d"]
-            )
-
-            ax.set_ylabel(
-                "Rendimiento (%)"
-            )
-
-            ax.set_title(
-                "Comparación de rendimiento"
-            )
-
-            st.pyplot(fig)
 
 # ---------------------------------------------------
 # PANEL DE CONTROL
@@ -620,8 +625,6 @@ elif menu == "Simulador":
 elif menu == "Panel de Control":
 
     st.header("Panel de control industrial")
-
-    st.divider()
 
     st.subheader("Evaporador")
 
@@ -637,7 +640,7 @@ elif menu == "Panel de Control":
     st.subheader("Sistema de lavado")
 
     ciclos_panel = st.slider(
-        "Ciclos de lavado del sistema",
+        "Ciclos de lavado",
         1,
         15,
         5
@@ -661,37 +664,37 @@ elif menu == "Panel de Control":
     if 70 <= temperatura_panel <= 78.5:
 
         st.success(
-            "Temperatura del evaporador estable."
+            "Temperatura estable"
         )
 
     else:
 
         st.error(
-            "Temperatura fuera de límites operativos."
+            "Temperatura fuera de límites"
         )
 
     if 5 <= ciclos_panel <= 10:
 
         st.success(
-            "Ciclos de lavado adecuados."
+            "Ciclos adecuados"
         )
 
     else:
 
         st.warning(
-            "Ciclos fuera del rango recomendado."
+            "Ciclos fuera del rango"
         )
 
     if humedad_panel < 5:
 
         st.success(
-            "Humedad controlada."
+            "Humedad controlada"
         )
 
     else:
 
         st.error(
-            "Humedad elevada."
+            "Humedad elevada"
         )
 
 # ---------------------------------------------------
@@ -700,22 +703,160 @@ elif menu == "Panel de Control":
 
 elif menu == "Resultados":
 
-    st.header("Resultados generales")
+    st.header("Resultados y análisis")
 
-    st.info("""
-    Esta sección muestra el análisis general
-    del comportamiento del sistema de extracción.
-    """)
+    if st.session_state.resultado_simulacion is None:
 
-    st.divider()
+        st.warning(
+            "Primero debe ejecutar una simulación."
+        )
 
-    st.metric(
-        "Rendimiento teórico de referencia",
-        "55.3 %"
-    )
+    else:
 
-    st.metric(
-        "Recuperación esperada de hexano",
-        "80 %"
-    )
-    
+        datos = st.session_state.resultado_simulacion
+
+        rendimiento_teorico = 55.3
+
+        diferencia = (
+            datos["rendimiento"]
+            - rendimiento_teorico
+        )
+
+        st.subheader(
+            "Comparación teórica vs simulada"
+        )
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "Simulado",
+            f"{datos['rendimiento']:.2f} %"
+        )
+
+        col2.metric(
+            "Teórico",
+            f"{rendimiento_teorico:.2f} %"
+        )
+
+        col3.metric(
+            "Diferencia",
+            f"{diferencia:.2f} %"
+        )
+
+        st.divider()
+
+        opcion_grafica = st.selectbox(
+            "Seleccione visualización",
+            [
+                "Distribución del proceso",
+                "Comparación teórica",
+                "Rendimiento vs Temperatura",
+                "Costos del proceso"
+            ]
+        )
+
+        # ---------------------------------------------------
+        # GRÁFICAS
+        # ---------------------------------------------------
+
+        if opcion_grafica == "Distribución del proceso":
+
+            etiquetas = [
+                "Aceite",
+                "Agua",
+                "Residuos"
+            ]
+
+            valores = [
+                datos["aceite_recuperado"],
+                datos["agua_eliminada"],
+                datos["residuos"]
+            ]
+
+            fig, ax = plt.subplots(
+                figsize=(5,4)
+            )
+
+            ax.pie(
+                valores,
+                labels=etiquetas,
+                autopct='%1.1f%%',
+                startangle=90
+            )
+
+            st.pyplot(fig)
+
+        elif opcion_grafica == "Comparación teórica":
+
+            categorias = [
+                "Simulado",
+                "Teórico"
+            ]
+
+            valores = [
+                datos["rendimiento"],
+                rendimiento_teorico
+            ]
+
+            fig, ax = plt.subplots(
+                figsize=(5,4)
+            )
+
+            ax.bar(
+                categorias,
+                valores,
+                color=["#16a34a", "#14532d"]
+            )
+
+            ax.set_ylabel(
+                "Rendimiento (%)"
+            )
+
+            st.pyplot(fig)
+
+        elif opcion_grafica == "Rendimiento vs Temperatura":
+
+            temperaturas = [50, 60, 70, 75, 80, 90]
+
+            rendimiento_temp = [30, 40, 50, 55.3, 48, 35]
+
+            fig, ax = plt.subplots(
+                figsize=(6,4)
+            )
+
+            ax.plot(
+                temperaturas,
+                rendimiento_temp,
+                marker='o',
+                linewidth=3,
+                color="#15803d"
+            )
+
+            ax.grid(True)
+
+            st.pyplot(fig)
+
+        elif opcion_grafica == "Costos del proceso":
+
+            categorias = [
+                "Costo total"
+            ]
+
+            valores = [
+                datos["costo_total"]
+            ]
+
+            fig, ax = plt.subplots(
+                figsize=(5,4)
+            )
+
+            ax.bar(
+                categorias,
+                valores,
+                color="#166534"
+            )
+
+            ax.set_ylabel("Costo ($)")
+
+            st.pyplot(fig)
+```
