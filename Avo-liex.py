@@ -227,19 +227,19 @@ if menu == "Inicio":
     st.header("Bienvenido a AVO-LIOEX")
 
     st.write("""
-    Plataforma de simulación industrial orientada
-    al análisis del proceso de extracción sólido-líquido
-    de aceite de aguacate Hass utilizando hexano
-    como solvente.
+    Plataforma de simulación industrial enfocada
+    en el proceso de extracción sólido-líquido
+    de aceite de aguacate Hass mediante el uso
+    de hexano como solvente.
     """)
 
     st.divider()
 
     st.info("""
-    Instrucciones de uso:
+    Manual rápido de uso:
 
-    1. Ingrese al simulador.
-    2. Ajuste variables operativas.
+    1. Seleccione el tipo de muestra.
+    2. Ingrese las variables operativas.
     3. Ejecute la simulación.
     4. Analice los resultados.
     """)
@@ -249,12 +249,12 @@ if menu == "Inicio":
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
-        "Temperatura óptima",
+        "Temperatura recomendada",
         "70 - 78.5 °C"
     )
 
     col2.metric(
-        "Ciclos recomendados",
+        "Ciclos de lavado",
         "5 - 10"
     )
 
@@ -280,6 +280,22 @@ elif menu == "Simulador":
     st.divider()
 
     # ---------------------------------------------------
+    # TIPO DE MUESTRA
+    # ---------------------------------------------------
+
+    st.subheader("Tipo de muestra")
+
+    tipo_muestra = st.radio(
+        "Seleccione el material a procesar",
+        [
+            "Pulpa de aguacate",
+            "Cáscara de aguacate"
+        ]
+    )
+
+    st.divider()
+
+    # ---------------------------------------------------
     # VARIABLES DE ENTRADA
     # ---------------------------------------------------
 
@@ -287,20 +303,23 @@ elif menu == "Simulador":
 
     with col1:
 
-        masa_aguacate = st.number_input(
-            "Masa de aguacate (g)",
-            min_value=0.0,
+        st.caption(
+            "Rango recomendado: 500 - 5000 g"
+        )
+
+        masa_muestra = st.number_input(
+            "Masa de muestra (g)",
+            min_value=100.0,
+            max_value=5000.0,
             value=1000.0
         )
 
-        masa_cascara = st.number_input(
-            "Masa de cáscara (g)",
-            min_value=0.0,
-            value=150.0
+        st.caption(
+            "Rango recomendado: 0 - 80 %"
         )
 
         humedad = st.slider(
-            "Humedad de la pulpa (%)",
+            "Humedad de la muestra (%)",
             0,
             100,
             75
@@ -308,11 +327,20 @@ elif menu == "Simulador":
 
     with col2:
 
+        st.caption(
+            "Rango recomendado: 200 - 1500 mL"
+        )
+
         hexano = st.number_input(
             "Volumen de hexano (mL)",
-            min_value=0.0,
+            min_value=100.0,
+            max_value=2000.0,
             value=500.0,
             help="Cantidad de hexano utilizada como solvente."
+        )
+
+        st.caption(
+            "Rango recomendado: 70 - 78.5 °C"
         )
 
         temperatura = st.slider(
@@ -322,19 +350,16 @@ elif menu == "Simulador":
             75
         )
 
+        st.caption(
+            "Rango recomendado: 5 - 10 ciclos"
+        )
+
         ciclos = st.slider(
-            "Ciclos de extracción",
+            "Ciclos de lavado",
             1,
             15,
             5
         )
-
-    st.divider()
-
-    st.caption("Rangos recomendados:")
-    st.caption("• Temperatura: 70 - 78.5 °C")
-    st.caption("• Ciclos recomendados: 5 - 10")
-    st.caption("• Humedad baja mejora el rendimiento")
 
     st.divider()
 
@@ -345,16 +370,36 @@ elif menu == "Simulador":
     if st.button("Iniciar simulación"):
 
         # ---------------------------------------------------
+        # DIFERENCIA ENTRE MUESTRAS
+        # ---------------------------------------------------
+
+        if tipo_muestra == "Pulpa de aguacate":
+
+            porcentaje_aceite = 0.15
+
+            eficiencia_base = 0.553
+
+        else:
+
+            porcentaje_aceite = 0.05
+
+            eficiencia_base = 0.32
+
+        # ---------------------------------------------------
         # CÁLCULOS
         # ---------------------------------------------------
 
-        masa_pulpa = masa_aguacate - masa_cascara
+        agua_eliminada = (
+            masa_muestra * (humedad / 100)
+        )
 
-        agua_eliminada = masa_pulpa * (humedad / 100)
+        aceite_teorico = (
+            masa_muestra * porcentaje_aceite
+        )
 
-        aceite_teorico = masa_pulpa * 0.15
-
-        eficiencia_ciclos = 0.553 + ((ciclos - 5) * 0.015)
+        eficiencia_ciclos = (
+            eficiencia_base + ((ciclos - 5) * 0.015)
+        )
 
         if eficiencia_ciclos > 0.75:
             eficiencia_ciclos = 0.75
@@ -363,15 +408,23 @@ elif menu == "Simulador":
             aceite_teorico * eficiencia_ciclos
         )
 
-        hexano_recuperado = hexano * 0.80
+        hexano_recuperado = (
+            hexano * 0.80
+        )
 
         rendimiento = (
             aceite_recuperado / aceite_teorico
         ) * 100
 
         eficiencia_global = (
-            aceite_recuperado / masa_pulpa
+            aceite_recuperado / masa_muestra
         ) * 100
+
+        residuos = (
+            masa_muestra
+            - agua_eliminada
+            - aceite_recuperado
+        )
 
         # ---------------------------------------------------
         # RESULTADOS
@@ -393,35 +446,35 @@ elif menu == "Simulador":
         col1, col2, col3 = st.columns(3)
 
         col1.metric(
-            "Pulpa útil",
-            f"{masa_pulpa:.2f} g"
-        )
-
-        col2.metric(
             "Agua eliminada",
             f"{agua_eliminada:.2f} g"
         )
 
-        col3.metric(
+        col2.metric(
             "Rendimiento",
             f"{rendimiento:.2f} %"
+        )
+
+        col3.metric(
+            "Hexano recuperado",
+            f"{hexano_recuperado:.2f} mL"
         )
 
         col4, col5, col6 = st.columns(3)
 
         col4.metric(
-            "Hexano recuperado",
-            f"{hexano_recuperado:.2f} mL"
-        )
-
-        col5.metric(
             "Eficiencia global",
             f"{eficiencia_global:.2f} %"
         )
 
-        col6.metric(
-            "Ciclos aplicados",
+        col5.metric(
+            "Ciclos de lavado",
             f"{ciclos}"
+        )
+
+        col6.metric(
+            "Tipo de muestra",
+            tipo_muestra
         )
 
         st.divider()
@@ -453,7 +506,7 @@ elif menu == "Simulador":
         if ciclos > 10:
 
             st.warning(
-                "Número elevado de ciclos."
+                "Número elevado de ciclos de lavado."
             )
 
         else:
@@ -481,13 +534,13 @@ elif menu == "Simulador":
         etiquetas = [
             "Aceite",
             "Agua",
-            "Cáscara"
+            "Residuos"
         ]
 
         valores = [
             aceite_recuperado,
             agua_eliminada,
-            masa_cascara
+            residuos
         ]
 
         fig, ax = plt.subplots()
@@ -507,24 +560,41 @@ elif menu == "Simulador":
 
 elif menu == "Panel de Control":
 
-    st.header("Panel de control")
+    st.header("Panel de control industrial")
+
+    st.write("""
+    Monitoreo de variables críticas del proceso
+    de extracción sólido-líquido.
+    """)
+
+    st.divider()
+
+    st.subheader("Evaporador")
 
     temperatura_panel = st.slider(
-        "Temperatura",
+        "Temperatura de evaporación del hexano (°C)",
         40,
         100,
         75
     )
 
+    st.divider()
+
+    st.subheader("Sistema de lavado")
+
     ciclos_panel = st.slider(
-        "Ciclos",
+        "Ciclos de lavado del sistema",
         1,
         15,
         5
     )
 
+    st.divider()
+
+    st.subheader("Muestra procesada")
+
     humedad_panel = st.slider(
-        "Humedad",
+        "Humedad de la muestra (%)",
         0,
         20,
         3
@@ -532,22 +602,24 @@ elif menu == "Panel de Control":
 
     st.divider()
 
+    st.subheader("Estado operativo")
+
     if 70 <= temperatura_panel <= 78.5:
 
         st.success(
-            "Sistema térmico estable."
+            "Temperatura del evaporador estable."
         )
 
     else:
 
         st.error(
-            "Temperatura fuera de límites."
+            "Temperatura fuera de límites operativos."
         )
 
     if 5 <= ciclos_panel <= 10:
 
         st.success(
-            "Ciclos dentro del rango."
+            "Ciclos de lavado adecuados."
         )
 
     else:
