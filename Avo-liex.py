@@ -259,9 +259,7 @@ if menu == "Inicio":
     col3.metric(
         "Rendimiento esperado",
         "55.3 %"
-    )
-
-# ---------------------------------------------------
+    ) # ---------------------------------------------------
 # SIMULADOR
 # ---------------------------------------------------
 
@@ -329,6 +327,10 @@ elif menu == "Simulador":
 
     st.divider()
 
+    st.subheader(
+        "Tiempos operativos"
+    )
+
     col1, col2, col3 = st.columns(3)
 
     tiempo_extraccion = col1.number_input(
@@ -352,7 +354,13 @@ elif menu == "Simulador":
         value=10
     )
 
+    st.divider()
+
     if st.button("Iniciar simulación"):
+
+        # ---------------------------------------------------
+        # CONFIGURACIÓN SEGÚN MUESTRA
+        # ---------------------------------------------------
 
         if tipo_muestra == "Pulpa de aguacate":
 
@@ -374,6 +382,10 @@ elif menu == "Simulador":
 
         humedad = 25
 
+        # ---------------------------------------------------
+        # CÁLCULOS
+        # ---------------------------------------------------
+
         agua_eliminada = (
             masa_muestra * (humedad / 100)
         )
@@ -383,7 +395,8 @@ elif menu == "Simulador":
         )
 
         eficiencia_ciclos = (
-            eficiencia_base + ((ciclos - 5) * 0.015)
+            eficiencia_base
+            + ((ciclos - 5) * 0.015)
         )
 
         if eficiencia_ciclos > 0.75:
@@ -399,11 +412,13 @@ elif menu == "Simulador":
         )
 
         rendimiento = (
-            aceite_recuperado / aceite_teorico
+            aceite_recuperado
+            / aceite_teorico
         ) * 100
 
         eficiencia_global = (
-            aceite_recuperado / masa_muestra
+            aceite_recuperado
+            / masa_muestra
         ) * 100
 
         residuos = (
@@ -411,6 +426,10 @@ elif menu == "Simulador":
             - agua_eliminada
             - aceite_recuperado
         )
+
+        # ---------------------------------------------------
+        # COSTOS AUTOMÁTICOS
+        # ---------------------------------------------------
 
         costo_hexano = (
             hexano * 0.08
@@ -428,6 +447,20 @@ elif menu == "Simulador":
             costo_hexano
             + costo_energia
         )
+
+        # ---------------------------------------------------
+        # VALORES TEÓRICOS
+        # ---------------------------------------------------
+
+        rendimiento_teorico = 55.3
+        pureza_teorica = 95
+        reciclaje_teorico = 85
+        impacto_teorico = 30
+        costo_teorico = 120
+
+        # ---------------------------------------------------
+        # GUARDAR RESULTADOS
+        # ---------------------------------------------------
 
         st.session_state.resultado_simulacion = {
 
@@ -447,53 +480,317 @@ elif menu == "Simulador":
             "ciclos": ciclos,
             "tipo_muestra": tipo_muestra,
 
-            "rendimiento_teorico": 55.3,
-            "pureza_teorica": 95,
-            "reciclaje_teorico": 85,
-            "impacto_teorico": 30,
-            "costo_teorico": 120,
+            "rendimiento_teorico": rendimiento_teorico,
+            "pureza_teorica": pureza_teorica,
+            "reciclaje_teorico": reciclaje_teorico,
+            "impacto_teorico": impacto_teorico,
+            "costo_teorico": costo_teorico,
             "reciclaje": reciclaje
         }
 
         st.success(
             "Simulación ejecutada correctamente."
-        )
-
+        ) 
 # ---------------------------------------------------
 # PANEL DE CONTROL
 # ---------------------------------------------------
 
 elif menu == "Panel de Control":
 
-    st.header("Panel de control industrial")
+    st.header("Centro de monitoreo industrial")
 
-    temperatura_panel = st.slider(
-        "Temperatura de evaporación del hexano (°C)",
-        40,
-        100,
-        75
+    st.write("""
+    Supervisión automática del proceso de extracción sólido-líquido.
+    """)
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # VARIABLES DINÁMICAS
+    # ---------------------------------------------------
+
+    temperatura_actual = 74.8
+
+    presion_actual = 1.2
+
+    ciclos_actuales = 5
+
+    recuperacion_hexano = 81
+
+    eficiencia_actual = 55.3
+
+    # ---------------------------------------------------
+    # MÉTRICAS PRINCIPALES
+    # ---------------------------------------------------
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    col1.metric(
+        "Temperatura actual",
+        f"{temperatura_actual:.1f} °C",
+        "+0.3 °C"
     )
 
-    ciclos_panel = st.slider(
-        "Ciclos de lavado del sistema",
-        1,
-        15,
-        5
+    col2.metric(
+        "Presión del sistema",
+        f"{presion_actual:.1f} bar",
+        "-0.1 bar"
     )
 
-    if 70 <= temperatura_panel <= 78.5:
+    col3.metric(
+        "Ciclos activos",
+        f"{ciclos_actuales}",
+        "+1"
+    )
+
+    col4.metric(
+        "Recuperación de hexano",
+        f"{recuperacion_hexano:.1f} %",
+        "+2 %"
+    )
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # BARRAS OPERATIVAS
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Control automático del sistema"
+    )
+
+    st.caption(
+        "Estabilidad térmica del evaporador"
+    )
+
+    st.progress(
+        int((temperatura_actual / 100) * 100)
+    )
+
+    st.caption(
+        "Eficiencia de recuperación de solvente"
+    )
+
+    st.progress(
+        int(recuperacion_hexano)
+    )
+
+    st.caption(
+        "Eficiencia operativa general"
+    )
+
+    st.progress(
+        int(eficiencia_actual)
+    )
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # ESTADO DE EQUIPOS
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Estado de equipos industriales"
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
 
         st.success(
-            "Temperatura estable"
+            "Evaporador: Operativo"
+        )
+
+        st.success(
+            "Sistema Soxhlet: Activo"
+        )
+
+        st.success(
+            "Condensador: Estable"
+        )
+
+    with col2:
+
+        st.success(
+            "Recuperación de solvente: Correcta"
+        )
+
+        st.success(
+            "Control PID: Activo"
+        )
+
+        st.success(
+            "Flujo de extracción: Estable"
+        )
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # ALERTAS AUTOMÁTICAS
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Alertas automáticas del sistema"
+    )
+
+    if temperatura_actual > 78.5:
+
+        st.error(
+            "Temperatura fuera del rango óptimo."
         )
 
     else:
 
-        st.error(
-            "Temperatura fuera de límites"
+        st.success(
+            "Temperatura dentro del rango recomendado."
         )
 
-# ---------------------------------------------------
+    if recuperacion_hexano < 75:
+
+        st.warning(
+            "La recuperación de hexano es menor a la esperada."
+        )
+
+    else:
+
+        st.success(
+            "Recuperación de hexano estable."
+        )
+
+    if eficiencia_actual < 50:
+
+        st.warning(
+            "La eficiencia del sistema es moderada."
+        )
+
+    else:
+
+        st.success(
+            "Eficiencia operativa adecuada."
+        )
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # ANÁLISIS AUTOMÁTICO
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Diagnóstico automático del sistema"
+    )
+
+    st.info(
+        "El sistema mantiene estabilidad térmica y condiciones adecuadas para la extracción."
+    )
+
+    st.info(
+        "La recuperación de solvente se encuentra dentro de parámetros eficientes."
+    )
+
+    st.info(
+        "No se detectan fallos críticos en los equipos industriales."
+    )
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # SIMULACIÓN DE ACTIVIDAD
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Actividad en tiempo real"
+    )
+
+    actividad = [
+
+        "Evaporador ajustando temperatura...",
+        "Sistema Soxhlet realizando lavado...",
+        "Recuperando hexano del condensador...",
+        "Analizando calidad del aceite...",
+        "Monitoreando eficiencia del proceso..."
+    ]
+
+    for evento in actividad:
+
+        st.success(evento)
+        
+
+    # ---------------------------------------------------
+    # ESTADO DE EQUIPOS
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Estado de equipos industriales"
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.success(
+            "Evaporador: Operativo"
+        )
+
+        st.success(
+            "Sistema de lavado: Activo"
+        )
+
+    with col2:
+
+        st.success(
+            "Condensador: Estable"
+        )
+
+        st.success(
+            "Recuperación de solvente: Correcta"
+        )
+
+    st.divider()
+
+    # ---------------------------------------------------
+    # ALERTAS AUTOMÁTICAS
+    # ---------------------------------------------------
+
+    st.subheader(
+        "Alertas del sistema"
+    )
+
+    if temperatura_actual > 78.5:
+
+        st.error(
+            "Temperatura fuera del rango óptimo."
+        )
+
+    else:
+
+        st.success(
+            "Temperatura dentro del rango recomendado."
+        )
+
+    if recuperacion_hexano < 75:
+
+        st.warning(
+            "La recuperación de hexano es menor a la esperada."
+        )
+
+    else:
+
+        st.success(
+            "Recuperación de hexano estable."
+        )
+
+    if eficiencia_actual < 50:
+
+        st.warning(
+            "La eficiencia del proceso es moderada."
+        )
+
+    else:
+
+        st.success(
+            "Eficiencia operativa adecuada."
+        ) 
+        # ---------------------------------------------------
 # RESULTADOS
 # ---------------------------------------------------
 
@@ -510,6 +807,10 @@ elif menu == "Resultados":
     else:
 
         datos = st.session_state.resultado_simulacion
+
+        # ---------------------------------------------------
+        # TABLA COMPARATIVA
+        # ---------------------------------------------------
 
         st.subheader(
             "Comparativa completa del proceso"
@@ -610,6 +911,10 @@ elif menu == "Resultados":
 
         st.divider()
 
+        # ---------------------------------------------------
+        # RECOMENDACIONES
+        # ---------------------------------------------------
+
         st.subheader(
             "Recomendaciones del simulador"
         )
@@ -675,6 +980,9 @@ elif menu == "Resultados":
             )
 
         st.divider()
+                # ---------------------------------------------------
+        # SELECTOR DE GRÁFICAS
+        # ---------------------------------------------------
 
         opcion_grafica = st.selectbox(
             "Seleccione visualización",
@@ -685,6 +993,10 @@ elif menu == "Resultados":
                 "Comparación ambiental"
             ]
         )
+
+        # ---------------------------------------------------
+        # DISTRIBUCIÓN
+        # ---------------------------------------------------
 
         if opcion_grafica == "Distribución del proceso":
 
@@ -713,6 +1025,10 @@ elif menu == "Resultados":
 
             st.pyplot(fig)
 
+        # ---------------------------------------------------
+        # COMPARACIÓN DE RENDIMIENTO
+        # ---------------------------------------------------
+
         elif opcion_grafica == "Comparación de rendimiento":
 
             categorias = [
@@ -732,14 +1048,25 @@ elif menu == "Resultados":
             ax.bar(
                 categorias,
                 valores,
-                color=["#16a34a", "#14532d"]
+                color=[
+                    "#16a34a",
+                    "#14532d"
+                ]
             )
 
             ax.set_ylabel(
                 "Rendimiento (%)"
             )
 
+            ax.set_title(
+                "Comparación de rendimiento"
+            )
+
             st.pyplot(fig)
+
+        # ---------------------------------------------------
+        # COMPARACIÓN ECONÓMICA
+        # ---------------------------------------------------
 
         elif opcion_grafica == "Comparación económica":
 
@@ -760,14 +1087,25 @@ elif menu == "Resultados":
             ax.bar(
                 categorias,
                 valores,
-                color=["#15803d", "#166534"]
+                color=[
+                    "#15803d",
+                    "#166534"
+                ]
             )
 
             ax.set_ylabel(
                 "Costo (Q)"
             )
 
+            ax.set_title(
+                "Comparación económica"
+            )
+
             st.pyplot(fig)
+
+        # ---------------------------------------------------
+        # COMPARACIÓN AMBIENTAL
+        # ---------------------------------------------------
 
         elif opcion_grafica == "Comparación ambiental":
 
@@ -788,11 +1126,31 @@ elif menu == "Resultados":
             ax.bar(
                 categorias,
                 valores,
-                color=["#16a34a", "#14532d"]
+                color=[
+                    "#16a34a",
+                    "#14532d"
+                ]
             )
 
             ax.set_ylabel(
                 "Impacto (%)"
             )
 
-            st.pyplot(fig)
+            ax.set_title(
+                "Comparación ambiental"
+            )
+
+            st.pyplot(fig) 
+            # ---------------------------------------------------
+# FIN DEL ARCHIVO
+# ---------------------------------------------------
+
+st.divider()
+
+st.caption(
+    "AVO-LIOEX © Simulador industrial de extracción de aceite de aguacate Hass"
+)
+
+st.caption(
+    "Universidad del Valle de Guatemala"
+) 
